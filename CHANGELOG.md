@@ -2,6 +2,16 @@
 
 Todos los cambios relevantes. Las versiones siguen [Semantic Versioning](https://semver.org/lang/es/).
 
+## 0.2.0 — howware conforme
+
+- finanzas-personales es el primer [howware](https://howware.org) y cumple la especificación 0.1: manifiesto
+  `howware.json` con dependencias y las tres listas de privacidad.
+- `fin.py`: errores como `{"ok": false, "error": {"code", "message"}}` con códigos de salida 2 (entrada inválida)
+  y 3 (memoria); un archivo ilegible o un JSON corrupto ya no terminan en una traza de Python.
+- SKILL.md: secciones "Frontera de la exactitud" (qué hace cada herramienta, códigos de salida) y "Aprobación"
+  (qué decide el usuario y cómo se guarda).
+- `tests/conversations.md`: 12 escenarios de conversación; `tests/test_howware.py`: pruebas de conformidad.
+
 ## 0.1.0 — primera versión pública
 
 - Skill `finanzas-personales` para Claude Code y Codex: protocolo de arranque, importación, categorías,

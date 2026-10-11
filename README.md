@@ -7,7 +7,8 @@
 
 <p align="center">
   <a href="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/versión-0.1.0-blue" alt="Versión 0.1.0">
+  <img src="https://img.shields.io/badge/versión-0.2.0-blue" alt="Versión 0.2.0">
+  <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/licencia-Apache%202.0-green" alt="Licencia Apache 2.0">
 </p>
@@ -19,6 +20,12 @@
   <a href="#privacidad-por-diseño">Privacidad por diseño</a> ·
   <a href="README.en.md">English</a>
 </p>
+
+> **El primer [howware](https://howware.org).** Un howware es tu saber hacer, puesto a trabajar con IA: dices las
+> reglas con tus palabras y un agente las sigue, con unas cuantas herramientas exactas y una memoria tuya. Sin app
+> que construir, sin intermediarios, sin esperas. Este repo cumple la
+> [especificación howware 0.1](https://github.com/proteo5/howware/blob/main/docs/es/especificacion.md); su
+> manifiesto es [`howware.json`](howware.json).
 
 Una app de finanzas personales es, en el fondo, cuatro cosas: **captura** de movimientos, una **base de datos**,
 **reglas** (categorías, presupuestos) y **pantallas**. Con un agente de IA la pantalla es la conversación, y el
@@ -278,7 +285,8 @@ El agente lo usa por ti; esta tabla es para auditar o automatizar. Toda salida e
 | `budget --category … --amount 4000 --month 2026-11` | Fija el presupuesto mensual desde ese mes |
 | `report --month 2026-09 [--level sub]` | Ingresos, gasto y neto por categoría, con presupuesto |
 
-Montos en la memoria: enteros en centavos (`MXN_cent`). Requiere mxbank ≥ 0.2.0 y Long-Term Memory for AI
+Errores: `{"ok": false, "error": {"code": …, "message": …}}` con código de salida **2** (entrada inválida) o
+**3** (problema con la memoria). Montos en la memoria: enteros en centavos (`MXN_cent`). Requiere mxbank ≥ 0.2.0 y Long-Term Memory for AI
 ≥ 0.3.0; `fin.py` verifica la versión de la memoria.
 
 ## Limitaciones

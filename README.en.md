@@ -7,7 +7,8 @@
 
 <p align="center">
   <a href="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version 0.1.0">
+  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version 0.2.0">
+  <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="Apache 2.0 license">
 </p>
@@ -16,6 +17,12 @@
   <a href="https://proteo5.github.io/finanzas-personales/">Project site</a> ·
   <a href="README.md">Español</a>
 </p>
+
+> **The first [howware](https://howware.org).** A howware is your know-how, put to work by AI: you state the rules
+> in your own words and an agent follows them, with a few exact tools and a memory you own. No app to build, no
+> one to hand it off to, no waiting. This repository conforms to the
+> [howware specification 0.1](https://github.com/proteo5/howware/blob/main/docs/spec.md); its manifest is
+> [`howware.json`](howware.json).
 
 A personal finance app is four things: **capture** of transactions, a **database**, **rules** (categories,
 budgets) and **screens**. With an AI agent the screen is the conversation, and three local, open tools do the

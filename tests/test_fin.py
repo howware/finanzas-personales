@@ -95,14 +95,25 @@ class FinTest(unittest.TestCase):
         path.write_text(json.dumps(st), encoding="utf-8")
         result = self.fin("import", str(path), "--by", BY, ok=False)
         self.assertFalse(result["ok"])
-        self.assertIn("--pseudonym-key-env", result["error"])
+        self.assertIn("--pseudonym-key-env", result["error"]["message"])
+        self.assertEqual(result["error"]["code"], 2)
 
     def test_rejects_old_schema(self):
         st = json.loads(Path(self.fixture("credit_m0")).read_text(encoding="utf-8"))
         st["schema_version"] = "1.0"
         path = Path(self.tmp.name) / "old.json"
         path.write_text(json.dumps(st), encoding="utf-8")
-        self.assertIn("schema 1.1", self.fin("import", str(path), "--by", BY, ok=False)["error"])
+        self.assertIn("schema 1.1", self.fin("import", str(path), "--by", BY, ok=False)["error"]["message"])
+
+    def test_unreadable_input_is_a_clear_error(self):
+        broken = Path(self.tmp.name) / "broken.json"
+        broken.write_text('{"ok": true, "statement_id": ', encoding="utf-8")
+        for path in (str(broken), str(Path(self.tmp.name) / "missing.json")):
+            proc = subprocess.run([sys.executable, str(FIN), "--mem", str(HELPER), "--db", self.db, "import", path,
+                                   "--by", BY], capture_output=True, text=True, encoding="utf-8")
+            self.assertEqual(proc.returncode, 2, proc.stderr)
+            self.assertEqual(json.loads(proc.stdout)["error"]["code"], 2)
+            self.assertNotIn("Traceback", proc.stderr)
 
     def test_ndjson_input(self):
         lines = [json.dumps(json.loads(Path(self.fixture(n)).read_text(encoding="utf-8"))) for n in ("bancoppel", "bbva_debit")]

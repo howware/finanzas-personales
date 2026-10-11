@@ -5,9 +5,9 @@ description: Lleva las finanzas personales del usuario sin app, sobre la memoria
 
 # Finanzas personales sin app
 
-Tres piezas, cada una con su responsabilidad:
-
-Requiere `project-memory` 0.3.0 o más reciente y `mxbank` 0.2.0 o más reciente; `fin.py` lo verifica.
+Un [howware](https://howware.org): el saber hacer de las finanzas personales, puesto a trabajar por ti. Tres
+piezas, cada una con su responsabilidad. Requiere `project-memory` 0.3.0 o más reciente y `mxbank` 0.2.0 o más
+reciente; `fin.py` lo verifica.
 
 | Pieza | Hace | Nunca |
 |---|---|---|
@@ -25,10 +25,45 @@ Ejecuta ambos desde la carpeta de finanzas del usuario (donde está `.memory/`).
    (los ids cambiarían y se duplicarían movimientos). Si la variable no existe, pide al usuario que la defina;
    nunca la pidas en la conversación ni la escribas en un archivo.
 3. Los montos en la memoria son **enteros en centavos** (`MXN_cent`). Convierte al presentar: 123456 → $1,234.56.
+   **Nunca sumes, conviertas ni transcribas movimientos por tu cuenta:** usa `FIN` y presenta lo que devuelve
+   (ver [Frontera de la exactitud](#frontera-de-la-exactitud)).
 4. **No inventes** qué es un comercio, contraparte (`PERSONA_…`) o movimiento desconocido: pregunta.
 5. Las **categorías las aprueba el usuario**. Tú propones; él decide. Guarda sus palabras literales con `--source`.
 6. Informas y organizas; **no eres asesor financiero** ni ejecutas pagos o transferencias.
 7. Reportes con datos reales: en la conversación o en `reportes/` (ignorada por git). No los publiques sin que lo pida.
+
+## Frontera de la exactitud
+
+| Lo hace una herramienta | Lo haces tú |
+|---|---|
+| Leer el PDF y quitar datos personales (`mxbank`) | Pedir los estados y explicar qué se importó |
+| Importar movimientos con ids estables, sin duplicar (`FIN import`) | Presentar el resumen y lo pendiente |
+| Sumas, totales por categoría y mes, presupuesto restante (`FIN report`, recetas) | Interpretar los números y señalar lo accionable |
+| Convertir montos a centavos, fechas a mediodía, claves de las capturas (`FIN expense`) | Entender lo que dijo el usuario y pedir lo que falte |
+| Guardar reglas, excepciones y presupuestos (`FIN categorize`, `recategorize`, `budget`) | Proponerlos y esperar la aprobación |
+| Cerrar pagos de tarjeta con los pagos del estado siguiente (`FIN import`) | Avisar si no se cubrió el pago para no generar intereses |
+
+Si necesitas un número que ninguna herramienta te da, dilo y propón la consulta; no lo calcules.
+
+**Códigos de salida de `FIN`:** 0 éxito · 2 entrada inválida (JSON de mxbank no apto, regla mal formada,
+archivo ilegible): explica el `error.message` y qué hacer · 3 problema con la memoria (no instalada, versión
+vieja, operación fallida): di qué instalar o revisar. Los errores llegan como
+`{"ok": false, "error": {"code": …, "message": …}}`.
+
+## Aprobación
+
+El usuario decide todo lo que da forma a respuestas futuras. Tú propones y esperas un sí claro:
+
+| Decisión | Cómo se propone | Cómo se guarda |
+|---|---|---|
+| Categoría de comercios, contrapartes y tipos nuevos | En un solo mensaje después de importar, agrupado por categoría (sección 3) | `FIN categorize --rule … --source "<sus palabras>"` |
+| Subcategoría nueva | Dentro de la misma propuesta, solo si ninguna existente sirve | `FIN add-category` |
+| Excepción de un movimiento | Confirmando el movimiento y la categoría | `FIN recategorize … --reason` |
+| Presupuesto | Repitiendo monto, categoría y mes de inicio | `FIN budget` |
+| Recategorizar una compra pasada a meses | Explicando el doble conteo (sección 3) | `FIN recategorize` |
+
+Guarda siempre sus palabras literales con `--source`: son la evidencia de la decisión. Nada hacia afuera (pagos,
+mensajes, publicar reportes) sin una petición explícita.
 
 ## Carpeta de finanzas
 

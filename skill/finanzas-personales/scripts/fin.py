@@ -28,7 +28,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 HERE = Path(__file__).resolve().parent
 SEED = HERE / "seed.json"
 MIN_SCHEMA = (1, 1)
@@ -42,8 +42,14 @@ STOPWORDS = {"SUC", "SUCURSAL", "CD", "MX", "MEX", "MEXICO", "SA", "DE", "CV", "
 COUNTERPARTY_KINDS = {"spei_in", "spei_out", "spei_refund", "transfer_in", "transfer_out"}
 
 
+# Códigos de salida (documentados en SKILL.md)
+OK, BAD_INPUT, MEMORY_ERROR = 0, 2, 3
+
+
 class FinError(Exception):
-    pass
+    def __init__(self, message: str, code: int = BAD_INPUT):
+        super().__init__(message)
+        self.code = code
 
 
 # -- memoria ------------------------------------------------------------------
@@ -54,7 +60,8 @@ def find_helper(explicit: str | None) -> Path:
     for c in candidates:
         if c and Path(c).is_file():
             return Path(c)
-    raise FinError("No encontré memory.py del skill project-memory. Instálalo o usa --mem / FIN_MEMORY_HELPER.")
+    raise FinError("No encontré memory.py del skill project-memory. Instálalo o usa --mem / FIN_MEMORY_HELPER.",
+                   MEMORY_ERROR)
 
 
 class Mem:
@@ -67,7 +74,7 @@ class Mem:
         found = re.search(r"(\d+)\.(\d+)\.(\d+)", out or "")
         if not found or tuple(int(x) for x in found.groups()) < MIN_MEMORY:
             raise FinError(f"Se necesita project-memory {'.'.join(map(str, MIN_MEMORY))} o más reciente "
-                           f"(encontré: {(out or '').strip() or 'desconocida'}). Reinstala el skill.")
+                           f"(encontré: {(out or '').strip() or 'desconocida'}). Reinstala el skill.", MEMORY_ERROR)
 
     def run(self, *args: str, stdin: dict | None = None) -> Any:
         cmd = [sys.executable, str(self.helper)] + (["--db", self.db] if self.db else []) + list(args)
@@ -75,7 +82,7 @@ class Mem:
                               capture_output=True, text=True, encoding="utf-8")
         out = proc.stdout.strip()
         if proc.returncode != 0:
-            raise FinError(f"memory.py {args[0]} falló: {(proc.stderr or out).strip()[-800:]}")
+            raise FinError(f"memory.py {args[0]} falló: {(proc.stderr or out).strip()[-800:]}", MEMORY_ERROR)
         return json.loads(out) if out else None
 
     def write(self, doc: dict) -> dict:
@@ -172,10 +179,16 @@ def cmd_setup(mem: Mem, args) -> dict:
 def read_statements(paths: list[str]) -> list[dict]:
     out = []
     for p in paths:
-        text = sys.stdin.read() if p == "-" else Path(p).read_text(encoding="utf-8")
+        try:
+            text = sys.stdin.read() if p == "-" else Path(p).read_text(encoding="utf-8")
+        except OSError as error:
+            raise FinError(f"No pude leer {p}: {error.strerror or error}") from error
         text = text.strip()
-        docs = [json.loads(text)] if text.startswith("{") and "\n{" not in text else \
-            [json.loads(line) for line in text.splitlines() if line.strip()]
+        try:
+            docs = [json.loads(text)] if text.startswith("{") and "\n{" not in text else \
+                [json.loads(line) for line in text.splitlines() if line.strip()]
+        except json.JSONDecodeError as error:
+            raise FinError(f"{p} no es JSON ni NDJSON de mxbank válido (línea {error.lineno}).") from error
         out += docs
     return out
 
@@ -607,9 +620,9 @@ def main() -> None:
         mem = Mem(find_helper(args.mem), args.db)
         mem.check_version()
         result = commands[args.command](mem, args)
-        code = 0
+        code = OK
     except FinError as exc:
-        result, code = {"ok": False, "error": str(exc)}, 1
+        result, code = {"ok": False, "error": {"code": exc.code, "message": str(exc)}}, exc.code
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     sys.exit(code)
