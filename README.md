@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Importa tus estados de cuenta, categoriza, presupuesta y pregunta, todo en la conversación con tu agente de IA.</b><br>
-  Privacidad por diseño: tus datos personales nunca llegan a la IA · 100 % local · Claude Code y Codex
+  Privacidad por diseño · lectura y almacenamiento en tu computadora · código abierto y auditable · Claude Code y Codex
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@ resto lo hacen tres herramientas locales y abiertas:
 
 | Pieza de una app | Aquí |
 |---|---|
-| Captura | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON sin datos personales |
+| Captura | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON anonimizado |
 | Base de datos | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI): un archivo SQLite local, solo de agregado, con historia |
 | Reglas | **este repo**: el skill `finanzas-personales` y `fin.py` |
 | Pantallas | la conversación con Claude Code o Codex |
@@ -49,49 +49,71 @@ Este proyecto nació de una pregunta: **¿cómo usar IA con tus finanzas sin ent
 de cuenta trae tu nombre, domicilio, RFC, números de tarjeta y CLABE, y los nombres y cuentas de las personas a
 las que les transfieres. Subirlo a un chat de IA entrega todo eso a un tercero.
 
-Aquí **el estado de cuenta nunca va a la IA**. Se lee en tu computadora, los datos que te identifican se
-eliminan ahí mismo, y el agente trabaja solo con lo que queda: movimientos anónimos.
+Por eso está construido para que **el estado de cuenta no se le entregue a la IA**: se lee en tu computadora,
+los datos que te identifican se eliminan ahí mismo, y el agente trabaja con lo que queda, movimientos sin tu
+nombre ni tus cuentas. Abajo está qué hace cada pieza, qué **no** podemos garantizar y dónde está el código
+para que lo compruebes.
 
 ```mermaid
 flowchart LR
-    subgraph local["🔒 Tu computadora (nada de esto sale)"]
+    subgraph local["🔒 En tu computadora"]
         PDF[(Estado de cuenta PDF<br/>nombre · RFC · tarjeta · CLABE)] --> MX[mxbank<br/>lee y elimina<br/>datos personales]
         MX --> MEM[(Memoria local<br/>SQLite)]
     end
-    MEM -- "solo movimientos anónimos:<br/>comercio · monto · fecha" --> IA([Agente de IA])
+    MEM -- "movimientos anonimizados:<br/>comercio · monto · fecha" --> IA([Agente de IA<br/>en la nube de tu proveedor])
 ```
 
-| 🔒 Se queda en tu computadora, nunca llega a la IA | Lo que la IA sí ve, para poder responderte |
+| 🔒 Diseñado para quedarse en tu computadora | Lo que la IA sí ve, para poder responderte |
 |---|---|
-| El PDF del estado de cuenta, completo | Comercio, monto y fecha de cada movimiento |
+| El PDF del estado de cuenta | Comercio, monto y fecha de cada movimiento |
 | Tu nombre, domicilio, RFC y CURP | Categorías, presupuestos y totales |
 | Números de tarjeta, de cuenta y CLABE | Seudónimos en lugar de cuentas (`ACC_92d5`) y personas (`PERSONA_7f3a`) |
 | Nombres y cuentas de las personas a las que transfieres | El nombre del producto y los últimos 4 dígitos de la cuenta (se omiten con `--privacy strict`) |
-| Claves de rastreo, referencias y conceptos de transferencias | |
-| El archivo de la memoria: el agente le hace consultas y solo ve las respuestas | |
+| Claves de rastreo, referencias y conceptos de transferencias | Lo que tú escribes en la conversación |
+| El archivo de la memoria (el agente le hace consultas y ve las respuestas) | |
 
-**Cómo se garantiza** (no es una promesa, es cómo está construido):
+### Cómo está construido
 
-1. **La IA nunca abre el PDF.** El skill lo prohíbe expresamente; solo [mxbank](https://github.com/proteo5/mx-bank-statement-reader)
-   lo lee, en tu máquina, sin conexión a internet.
-2. **La salida se arma con una lista cerrada de campos**: no existe un lugar donde quepa tu nombre o tu domicilio.
-3. **Un escáner revisa el resultado completo** buscando CLABEs, tarjetas, RFC, CURP, correos y las palabras de tu
-   nombre y domicilio. **Si duda, no entrega nada.**
-4. **Las personas a las que transfieres se vuelven seudónimos** con una llave que solo tú tienes (`MXBANK_KEY`).
-5. **Todo se guarda en un archivo de tu carpeta**: sin servidor, sin cuenta, sin sincronización. mxbank,
-   `fin.py` y la memoria no hacen ninguna conexión de red.
-6. **Este repositorio no puede recibir datos reales**: una guardia en CI rechaza PDFs, bases de datos, CLABEs,
-   tarjetas, RFC, CURP y correos.
+| Medida | Dónde comprobarlo |
+|---|---|
+| El skill le prohíbe al agente abrir o leer el PDF; solo `mxbank` lo lee | [SKILL.md](skill/finanzas-personales/SKILL.md#reglas-no-negociables) · [skill de mxbank](https://github.com/proteo5/mx-bank-statement-reader/blob/main/.claude/skills/mxbank/SKILL.md) |
+| La salida de mxbank se arma con una lista cerrada de campos: no hay dónde quepa tu nombre o domicilio | [models/statement.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/models/statement.py) |
+| Un escáner revisa el resultado completo (CLABE, tarjeta, RFC, CURP, correo y las palabras de tu nombre y domicilio) y, si sospecha, **no entrega nada** | [privacy/residual_scan.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/residual_scan.py) · [privacy/detectors.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/detectors.py) |
+| Las personas a las que transfieres se vuelven seudónimos con una llave que solo tú tienes | [privacy/pseudonym.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/pseudonym.py) |
+| mxbank, `fin.py` y la memoria no abren conexiones de red; las pruebas de mxbank fallan si algo lo intenta | [tests/conftest.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/tests/conftest.py) · [fin.py](skill/finanzas-personales/scripts/fin.py) · [memoria](https://github.com/proteo5/long-term-memory-for-AI#tus-datos) |
+| Todo se guarda en un archivo SQLite de tu carpeta: sin servidor ni cuenta | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI) |
+| Este repositorio rechaza en CI PDFs, bases de datos e identificadores personales | [tools/check_private_data.py](tools/check_private_data.py) |
 
-> **Para ser exactos:** lo que el agente sí ve (comercios, montos, fechas, seudónimos) se envía a tu proveedor
-> de IA y queda sujeto a sus términos. No te identifica por sí solo, pero sigue siendo información sobre tus
-> hábitos de gasto. Detalle en [Privacidad](#privacidad) y en el [aviso legal](AVISO-LEGAL.md).
+### Lo que no podemos garantizar
+
+- **La anonimización automática no es infalible.** Un formato nuevo del banco, un concepto escrito a mano o un
+  error de software podrían dejar pasar un dato. mxbank prefiere no entregar nada ante la duda, pero si vas a
+  compartir una salida, revísala (`mxbank audit` ayuda).
+- **La regla de no abrir el PDF es una instrucción al agente.** Los agentes la siguen, pero no es una barrera
+  física. En Claude Code puedes reforzarla con un permiso que le niega leer PDFs (ver
+  [Primeros pasos](#primeros-pasos)); aun así, un agente con acceso a la terminal tendría otras formas de leer
+  un archivo.
+- **Lo que el agente sí ve sale de tu computadora.** Comercios, montos, fechas, seudónimos y tus mensajes llegan
+  a tu proveedor de IA y quedan sujetos a sus términos. No te identifican por sí solos, pero son información
+  sobre tus hábitos de gasto.
+- **La memoria no está cifrada.** Protégela como cualquier archivo personal (cifrado de disco, respaldos).
+
+### Código abierto para que lo revises
+
+No te pedimos confianza: te pedimos que lo revises. Las tres piezas son **código abierto bajo Apache 2.0** y
+son pequeñas a propósito. `fin.py` son unas 600 líneas de Python sin dependencias, y el protocolo del agente es
+un archivo de texto que puedes leer en cinco minutos.
+
+- [finanzas-personales](https://github.com/proteo5/finanzas-personales) · [mxbank](https://github.com/proteo5/mx-bank-statement-reader) · [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI)
+- Si encuentras una forma en que un dato personal llegue a la IA, o cualquier otro problema de privacidad,
+  repórtalo de forma privada siguiendo [SECURITY.md](SECURITY.md). Tiene prioridad sobre cualquier otro cambio.
 
 ---
 
 ## Contenido
 
 - [Privacidad por diseño](#privacidad-por-diseño)
+  - [Cómo está construido](#cómo-está-construido) · [Lo que no podemos garantizar](#lo-que-no-podemos-garantizar) · [Código abierto para que lo revises](#código-abierto-para-que-lo-revises)
 - [Características](#características)
 - [Cómo funciona](#cómo-funciona)
 - [Instalación](#instalación)
@@ -108,8 +130,10 @@ flowchart LR
 
 ## Características
 
-- **Tus datos personales nunca llegan a la IA.** El estado de cuenta se lee y se anonimiza en tu computadora;
-  el agente solo ve movimientos anónimos. Ver [Privacidad por diseño](#privacidad-por-diseño).
+- **Diseñado para que tus datos personales no lleguen a la IA.** El estado de cuenta se lee y se anonimiza en
+  tu computadora; el agente trabaja con movimientos sin tu nombre ni tus cuentas. Ver
+  [Privacidad por diseño](#privacidad-por-diseño).
+- **Código abierto y auditable.** Las tres piezas son Apache 2.0 y pequeñas, para que cualquiera las revise.
 - **Importa estados de cuenta** de BBVA (débito y crédito) y BanCoppel (débito). Reimportar o importar en
   desorden no duplica nada: cada movimiento tiene un id estable.
 - **Categorías que aprenden.** Corriges un comercio una vez y todo su historial se reclasifica. Las
@@ -129,7 +153,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     PDF[(Estados PDF<br/>en tu carpeta)] --> MX[mxbank extract]
-    MX -- JSON sin datos personales --> FIN[fin.py import]
+    MX -- JSON anonimizado --> FIN[fin.py import]
     U([Tú]) <--> A[Agente<br/>Claude Code · Codex]
     SK[skill finanzas-personales] -. enseña .-> A
     A --> FIN
@@ -186,9 +210,17 @@ echo "export MXBANK_KEY='$(python3 -c 'import secrets; print(secrets.token_urlsa
 2. Agrega un `CLAUDE.md` (o `AGENTS.md` para Codex) con la instrucción de memoria persistente de
    [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI#configurar-un-proyecto) y, si
    usas git, un `.gitignore` con `estados/`, `reportes/` y `.memory/`.
-3. Abre ahí Claude Code o Codex y escribe: *«Quiero llevar mis finanzas aquí.»* El agente te pide tu nombre,
+3. *(Recomendado en Claude Code)* refuerza la regla de no leer PDFs con un permiso en
+   `.claude/settings.json` de esa carpeta. Bloquea la herramienta de lectura de archivos, no los comandos de
+   terminal, así que reduce el riesgo pero no lo elimina:
+
+   ```json
+   { "permissions": { "deny": ["Read(**/*.pdf)"] } }
+   ```
+
+4. Abre ahí Claude Code o Codex y escribe: *«Quiero llevar mis finanzas aquí.»* El agente te pide tu nombre,
    crea la memoria y carga las categorías.
-4. *«Importa los estados de `estados/`.»* Revisa y aprueba la propuesta de categorías.
+5. *«Importa los estados de `estados/`.»* Revisa y aprueba la propuesta de categorías.
 
 ## Qué le puedes pedir
 
@@ -219,7 +251,7 @@ Detalle de cada dato. El resumen está en [Privacidad por diseño](#privacidad-p
 
 | Dato | Tratamiento |
 |---|---|
-| El PDF | Nunca lo lee la IA; solo `mxbank`, en tu máquina |
+| El PDF | El skill le prohíbe al agente leerlo; solo `mxbank` lo lee, en tu máquina (refuérzalo con el permiso de [Primeros pasos](#primeros-pasos)) |
 | Nombre, domicilio, RFC, CURP, tarjeta, CLABE | Los elimina `mxbank` antes de que nada más los vea |
 | Personas a las que transfieres | Seudónimos estables (`PERSONA_7f3a`); tú les pones nombre si quieres |
 | Comercio, monto y fecha | Se guardan: es el propósito de la herramienta |

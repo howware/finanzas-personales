@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>finanzas-personales · Tus finanzas sin app, con IA</title>
-<meta name="description" content="Lleva tus finanzas personales con un agente de IA (Claude Code o Codex) sin instalar ninguna app: importa estados de cuenta, categoriza, presupuesta y pregunta. Privacidad por diseño: tu estado de cuenta se lee en tu computadora y tus datos personales nunca llegan a la IA.">
+<meta name="description" content="Lleva tus finanzas personales con un agente de IA (Claude Code o Codex) sin instalar ninguna app: importa estados de cuenta, categoriza, presupuesta y pregunta. Privacidad por diseño: tu estado de cuenta se lee y se anonimiza en tu computadora. Código abierto y auditable.">
 <meta property="og:title" content="finanzas-personales · Tus finanzas sin app, con IA">
-<meta property="og:description" content="Importa tus estados de cuenta, categoriza, presupuesta y pregunta en la conversación. 100 % local, sin datos personales, con historial que nunca se borra.">
+<meta property="og:description" content="Importa tus estados de cuenta, categoriza, presupuesta y pregunta en la conversación. Tu estado de cuenta se lee en tu computadora y el agente trabaja con movimientos anonimizados. Código abierto.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23127a55'/%3E%3Cpath d='M9 22V15M16 22V10M23 22v-9' stroke='white' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
@@ -175,7 +175,7 @@
   .panel h3 { margin: 0 0 14px; font-size: 17px; }
   .panel ul { margin: 0; padding-left: 20px; color: var(--text-2); display: grid; gap: 6px; font-size: 15px; }
   .panel.keep ul { list-style: none; padding-left: 0; }
-  .panel.keep li::before { content: "🔒 "; }
+  .panel.keep ul:not([style]) li::before { content: "🔒 "; }
   .how { counter-reset: h; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   @media (max-width: 900px) { .how { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .how { grid-template-columns: 1fr; } }
@@ -215,14 +215,14 @@
       <div>
         <span class="eyebrow">🔒 Privacidad por diseño</span>
         <h1>Tus finanzas personales, <span class="hl">sin app</span>.</h1>
-        <p class="lead">Importa tus estados de cuenta, categoriza, presupuesta y pregunta, todo en la conversación con tu agente de IA. <b>Tu estado de cuenta nunca llega a la IA</b>: se lee en tu computadora y el agente solo ve movimientos anónimos.</p>
+        <p class="lead">Importa tus estados de cuenta, categoriza, presupuesta y pregunta, todo en la conversación con tu agente de IA. <b>Tu estado de cuenta no se le entrega a la IA</b>: se lee en tu computadora y el agente trabaja con movimientos anonimizados. Todo es código abierto, para que lo compruebes.</p>
         <div class="cta">
           <a class="btn primary" href="#instalacion">Empezar</a>
           <a class="btn" href="#privacidad">Cómo protege tus datos</a>
         </div>
         <div class="facts">
-          <span>Tus datos personales no llegan a la IA</span>
-          <span>100 % local</span>
+          <span>Lectura y almacenamiento en tu computadora</span>
+          <span>Código abierto y auditable</span>
           <span>Sin servidor ni cuenta</span>
           <span>Historial que no se borra</span>
         </div>
@@ -252,12 +252,12 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
   <section id="privacidad" class="alt">
     <div class="wrap">
       <span class="eyebrow">🔒 Privacidad por diseño</span>
-      <h2>Tu estado de cuenta nunca llega a la IA</h2>
-      <p class="sub">Este proyecto nació de una pregunta: ¿cómo usar IA con tus finanzas sin entregarle tu identidad? Un estado de cuenta trae tu nombre, domicilio, RFC, tarjeta, CLABE y los datos de las personas a las que les transfieres. Aquí todo eso se lee y se elimina <b>en tu computadora</b>; el agente trabaja solo con lo que queda.</p>
+      <h2>Tu estado de cuenta no se le entrega a la IA</h2>
+      <p class="sub">Este proyecto nació de una pregunta: ¿cómo usar IA con tus finanzas sin entregarle tu identidad? Un estado de cuenta trae tu nombre, domicilio, RFC, tarjeta, CLABE y los datos de las personas a las que les transfieres. Por eso está construido para que se lea y se anonimice <b>en tu computadora</b>, y el agente trabaje con lo que queda. Aquí está qué hace cada pieza, qué no podemos garantizar y dónde está el código para que lo compruebes.</p>
 
       <div class="flow" role="img" aria-label="El PDF se lee en tu computadora, se eliminan los datos personales y solo los movimientos anónimos llegan al agente de IA">
         <div class="local">
-          <span class="lbl">🔒 Tu computadora · nada de esto sale</span>
+          <span class="lbl">🔒 En tu computadora</span>
           <div class="chain">
             <div class="node pii"><b>Estado de cuenta PDF</b><span>nombre · RFC · tarjeta · CLABE</span></div>
             <div class="ar">→</div>
@@ -266,15 +266,15 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
             <div class="node"><b>Memoria local</b><span>un archivo SQLite en tu carpeta</span></div>
           </div>
         </div>
-        <div class="out">→<small>solo movimientos anónimos</small></div>
-        <div class="ai"><b>Agente de IA</b><span>comercio · monto · fecha</span></div>
+        <div class="out">→<small>movimientos anonimizados</small></div>
+        <div class="ai"><b>Agente de IA</b><span>en la nube de tu proveedor · comercio, monto y fecha</span></div>
       </div>
 
       <div class="split">
         <div class="panel keep">
-          <h3>Se queda en tu computadora</h3>
+          <h3>Diseñado para quedarse en tu computadora</h3>
           <ul>
-            <li>El PDF del estado de cuenta, completo</li>
+            <li>El PDF del estado de cuenta</li>
             <li>Tu nombre, domicilio, RFC y CURP</li>
             <li>Números de tarjeta, de cuenta y CLABE</li>
             <li>Nombres y cuentas de las personas a las que transfieres</li>
@@ -294,17 +294,37 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
         </div>
       </div>
 
-      <h3 style="margin:0 0 14px;font-size:18px">No es una promesa: es cómo está construido</h3>
+      <h3 style="margin:0 0 14px;font-size:18px">Cómo está construido, y dónde comprobarlo</h3>
       <ol class="how">
-        <li><b>La IA nunca abre el PDF</b>El skill lo prohíbe; solo mxbank lo lee, en tu máquina y sin conexión a internet.</li>
-        <li><b>Lista cerrada de campos</b>La salida no tiene ningún lugar donde quepa tu nombre o tu domicilio.</li>
-        <li><b>Si duda, no entrega nada</b>Un escáner revisa el resultado completo: CLABEs, tarjetas, RFC, CURP, correos y las palabras de tu nombre y domicilio.</li>
-        <li><b>Seudónimos con tu llave</b>Las personas a las que transfieres se vuelven <code>PERSONA_…</code> con una llave que solo tú tienes.</li>
-        <li><b>Sin servidor ni red</b>mxbank, fin.py y la memoria no hacen ninguna conexión; todo vive en un archivo de tu carpeta.</li>
-        <li><b>El repositorio se protege solo</b>Una guardia en CI rechaza PDFs, bases de datos y cualquier identificador personal.</li>
+        <li><b>El agente tiene prohibido abrir el PDF</b>El skill se lo prohíbe; solo mxbank lo lee, en tu máquina. <a href="https://github.com/proteo5/finanzas-personales/blob/main/skill/finanzas-personales/SKILL.md#reglas-no-negociables">Ver la regla →</a></li>
+        <li><b>Lista cerrada de campos</b>La salida de mxbank no tiene ningún lugar donde quepa tu nombre o tu domicilio. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/models/statement.py">Ver el modelo →</a></li>
+        <li><b>Si sospecha, no entrega nada</b>Un escáner revisa el resultado completo: CLABE, tarjeta, RFC, CURP, correo y las palabras de tu nombre y domicilio. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/residual_scan.py">Ver el escáner →</a></li>
+        <li><b>Seudónimos con tu llave</b>Las personas a las que transfieres se vuelven <code>PERSONA_…</code> con una llave que solo tú tienes. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/pseudonym.py">Ver el código →</a></li>
+        <li><b>Sin servidor ni conexiones</b>mxbank, fin.py y la memoria no abren conexiones de red; las pruebas de mxbank fallan si algo lo intenta. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/tests/conftest.py">Ver la prueba →</a></li>
+        <li><b>El repositorio tiene una guardia</b>CI rechaza PDFs, bases de datos e identificadores personales en cualquier archivo. <a href="https://github.com/proteo5/finanzas-personales/blob/main/tools/check_private_data.py">Ver la guardia →</a></li>
       </ol>
 
-      <div class="note"><b>Para ser exactos:</b> lo que el agente sí ve (comercios, montos, fechas, seudónimos) se envía a tu proveedor de IA y queda sujeto a sus términos. No te identifica por sí solo, pero sigue siendo información sobre tus hábitos de gasto. Más detalle en el <a href="https://github.com/proteo5/finanzas-personales/blob/main/AVISO-LEGAL.md">aviso legal</a>.</div>
+      <div class="split" style="margin:32px 0 0">
+        <div class="panel">
+          <h3>Lo que no podemos garantizar</h3>
+          <ul>
+            <li><b>La anonimización automática no es infalible.</b> Un formato nuevo del banco o un error de software podrían dejar pasar un dato; mxbank prefiere no entregar nada ante la duda.</li>
+            <li><b>La regla de no abrir el PDF es una instrucción al agente.</b> En Claude Code se refuerza con un permiso que le niega leer PDFs, pero no es una barrera absoluta.</li>
+            <li><b>Lo que el agente sí ve sale de tu computadora.</b> Comercios, montos, fechas, seudónimos y tus mensajes llegan a tu proveedor de IA, bajo sus términos.</li>
+            <li><b>La memoria no está cifrada.</b> Protégela como cualquier archivo personal.</li>
+          </ul>
+        </div>
+        <div class="panel keep">
+          <h3>Código abierto, para que lo revises</h3>
+          <p style="margin:0 0 12px;color:var(--text-2);font-size:15px">No te pedimos confianza: te pedimos que lo revises. Las tres piezas son <b>Apache 2.0</b> y pequeñas a propósito; <code>fin.py</code> son unas 600 líneas sin dependencias y el protocolo del agente es un archivo de texto.</p>
+          <ul style="list-style:none;padding:0">
+            <li>→ <a href="https://github.com/proteo5/finanzas-personales">finanzas-personales</a></li>
+            <li>→ <a href="https://github.com/proteo5/mx-bank-statement-reader">mxbank</a></li>
+            <li>→ <a href="https://github.com/proteo5/long-term-memory-for-AI">Long-Term Memory for AI</a></li>
+            <li>→ ¿Encontraste un problema de privacidad? <a href="https://github.com/proteo5/finanzas-personales/blob/main/SECURITY.md">Repórtalo en privado</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -377,8 +397,8 @@ Amazon siguen en Compras personales.
 
   <section id="herramientas">
     <div class="wrap">
-      <h2>Tres herramientas abiertas</h2>
-      <p class="sub">Cada una sirve sola; juntas reemplazan una app de finanzas.</p>
+      <h2>Tres herramientas abiertas y auditables</h2>
+      <p class="sub">Cada una sirve sola; juntas reemplazan una app de finanzas. Todas son código abierto bajo Apache 2.0.</p>
       <div class="tools">
         <div class="tool"><span class="tag">Captura</span><h3>mxbank</h3><p>Estados de cuenta de bancos mexicanos en PDF a JSON anonimizado y conciliado, con ids estables entre meses.</p><a href="https://github.com/proteo5/mx-bank-statement-reader">proteo5/mx-bank-statement-reader →</a></div>
         <div class="tool"><span class="tag">Almacén</span><h3>Long-Term Memory for AI</h3><p>Memoria persistente para agentes: hechos con vigencia, eventos, consultas sin SQL y respaldo verificado.</p><a href="https://github.com/proteo5/long-term-memory-for-AI">proteo5/long-term-memory-for-AI →</a></div>

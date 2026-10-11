@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Import your bank statements, categorize, budget and ask questions, all in a conversation with your AI agent.</b><br>
-  Privacy by design: your personal data never reaches the AI · 100 % local · Claude Code and Codex
+  Privacy by design · read and stored on your computer · open source and auditable · Claude Code and Codex
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@ rest:
 
 | App piece | Here |
 |---|---|
-| Capture | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): reads Mexican bank statement PDFs on your machine and outputs JSON without personal data |
+| Capture | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): reads Mexican bank statement PDFs on your machine and outputs anonymized JSON |
 | Database | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI): a local, append-only SQLite file with history |
 | Rules | **this repo**: the `finanzas-personales` skill and `fin.py` |
 | Screens | the conversation with Claude Code or Codex |
@@ -37,28 +37,37 @@ This project started from one question: **how do you use AI with your finances w
 identity?** A bank statement carries your name, address, tax id, card and account numbers, and the names and
 accounts of the people you pay. Uploading it to an AI chat gives all of that to a third party.
 
-Here **the statement never goes to the AI**. It is read on your computer, everything that identifies you is
-removed right there, and the agent only works with what is left: anonymous transactions.
+So it is built so that **the statement is not handed to the AI**: it is read on your computer, what identifies
+you is removed right there, and the agent works with what is left: transactions without your name or accounts.
 
-| 🔒 Stays on your computer, never reaches the AI | What the AI does see, so it can answer you |
+| 🔒 Designed to stay on your computer | What the AI does see, so it can answer you |
 |---|---|
-| The statement PDF, in full | Merchant, amount and date of each transaction |
+| The statement PDF | Merchant, amount and date of each transaction |
 | Your name, address, RFC and CURP | Categories, budgets and totals |
 | Card and account numbers, CLABE | Pseudonyms instead of accounts (`ACC_92d5`) and people (`PERSONA_7f3a`) |
 | Names and accounts of the people you pay | Product name and last 4 digits of the account (can be omitted) |
-| The memory file: the agent queries it and only sees the answers | What you type in the conversation |
+| The memory file (the agent queries it and sees the answers) | What you type in the conversation |
 
-How it is enforced: the skill forbids the agent from opening the PDF; only mxbank reads it, offline; its output
-is built from a closed list of fields; a final scanner withholds the whole result if it finds anything that
-looks personal; counterparties are pseudonymized with a key only you hold; mxbank, `fin.py` and the memory make
-no network connections; and CI blocks real data from ever being committed.
+**How it is built:** the skill forbids the agent from opening the PDF and only mxbank reads it; mxbank's output
+is a closed list of fields; a final scanner withholds the whole result if anything looks personal;
+counterparties are pseudonymized with a key only you hold; mxbank, `fin.py` and the memory open no network
+connections; CI blocks real data from being committed. The Spanish [README](README.md#cómo-está-construido)
+links each measure to the code that implements it.
 
-> **To be precise:** what the agent does see (merchants, amounts, dates, pseudonyms) is sent to your AI
-> provider under its terms. It does not identify you on its own, but it is still information about your
-> spending habits.
+**What we cannot guarantee:** automatic anonymization is not infallible; the no-PDF rule is an instruction to
+the agent (in Claude Code you can back it with a `Read(**/*.pdf)` deny permission, which still is not an
+absolute barrier); what the agent does see leaves your computer for your AI provider, under its terms; and the
+memory file is not encrypted.
+
+**Open source so you can check it.** We don't ask for trust, we ask you to review it. All three pieces are
+Apache 2.0 and small on purpose: [finanzas-personales](https://github.com/proteo5/finanzas-personales),
+[mxbank](https://github.com/proteo5/mx-bank-statement-reader),
+[Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI). Found a privacy problem? Report
+it privately via [SECURITY.md](SECURITY.md).
 
 ## Features
 
+- **Designed so your personal data does not reach the AI**, and open source so anyone can verify it.
 - **Statement import** that never duplicates, in any order, thanks to mxbank's stable ids.
 - **Categories that learn.** Fix a merchant once and its whole history is reclassified; one-off exceptions
   don't break the rule.
