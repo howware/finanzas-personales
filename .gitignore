@@ -1,0 +1,9 @@
+# datos reales: nunca al repo
+estados/
+reportes/
+corpus/
+.memory/
+*.pdf
+
+__pycache__/
+*.pyc

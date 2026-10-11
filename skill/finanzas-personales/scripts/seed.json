@@ -1,0 +1,679 @@
+{
+  "seed_version": "2",
+  "predicates": [
+    {
+      "id": "amount",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Amount",
+      "description": "Signed amount in cents: outflows negative, inflows positive"
+    },
+    {
+      "id": "tx_type",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Transaction type",
+      "description": "Technical type from mxbank (card_purchase, spei_out, fee...) or manual"
+    },
+    {
+      "id": "bank_description",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Bank description",
+      "description": "Anonymized description as printed by the bank"
+    },
+    {
+      "id": "entry_source",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Entry source",
+      "description": "statement (imported) or manual (told by the person)"
+    },
+    {
+      "id": "original_currency",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Original currency",
+      "description": "Currency of a foreign purchase"
+    },
+    {
+      "id": "original_amount_text",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Original amount",
+      "description": "Amount in the original currency, decimal text"
+    },
+    {
+      "id": "exchange_rate_text",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Exchange rate",
+      "description": "Exchange rate applied by the bank, decimal text"
+    },
+    {
+      "id": "installment_number",
+      "value_type": "integer",
+      "cardinality": "one",
+      "label": "Installment number",
+      "description": "Installment N of M"
+    },
+    {
+      "id": "installments_total",
+      "value_type": "integer",
+      "cardinality": "one",
+      "label": "Installments total",
+      "description": "M in installment N of M"
+    },
+    {
+      "id": "on_account",
+      "value_type": "entity",
+      "label": "On account",
+      "description": "Account a transaction, statement or plan belongs to",
+      "cardinality": "one"
+    },
+    {
+      "id": "classified_by",
+      "value_type": "entity",
+      "label": "Classified by",
+      "description": "Merchant, counterparty or transaction kind whose category rule applies to a transaction",
+      "cardinality": "one"
+    },
+    {
+      "id": "imported_from",
+      "value_type": "any",
+      "label": "Imported from",
+      "description": "Statement event a transaction came from",
+      "cardinality": "one"
+    },
+    {
+      "id": "for_statement",
+      "value_type": "any",
+      "label": "For statement",
+      "description": "Statement event a payment due belongs to",
+      "cardinality": "one"
+    },
+    {
+      "id": "categorized_as",
+      "value_type": "entity",
+      "cardinality": "one",
+      "label": "Categorized as",
+      "description": "Category rule of a merchant, counterparty or transaction kind (always a subcategory)"
+    },
+    {
+      "id": "recategorizes",
+      "value_type": "any",
+      "label": "Recategorizes",
+      "description": "Transaction whose category is overridden by this event",
+      "cardinality": "one"
+    },
+    {
+      "id": "to_category",
+      "value_type": "entity",
+      "label": "To category",
+      "description": "Category chosen for one transaction, overriding its rule",
+      "cardinality": "one"
+    },
+    {
+      "id": "account_product",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Account product",
+      "description": "debit, credit or cash"
+    },
+    {
+      "id": "bank_code",
+      "value_type": "text",
+      "cardinality": "one",
+      "label": "Bank",
+      "description": "Bank code from mxbank (bbva, bancoppel...)"
+    },
+    {
+      "id": "balance",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Balance",
+      "description": "Account balance at a date in cents; credit card debt is negative"
+    },
+    {
+      "id": "credit_limit",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Credit limit",
+      "description": "Credit card limit in cents"
+    },
+    {
+      "id": "period_start",
+      "value_type": "datetime",
+      "cardinality": "one",
+      "label": "Period start",
+      "description": "First day of a statement period"
+    },
+    {
+      "id": "period_end",
+      "value_type": "datetime",
+      "cardinality": "one",
+      "label": "Period end",
+      "description": "Last day (cut-off) of a statement period"
+    },
+    {
+      "id": "opening_balance",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Opening balance",
+      "description": "Statement opening balance in cents"
+    },
+    {
+      "id": "closing_balance",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Closing balance",
+      "description": "Statement closing balance in cents"
+    },
+    {
+      "id": "total_balance",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Total card debt",
+      "description": "Credit card total debt at cut-off in cents (positive)"
+    },
+    {
+      "id": "no_interest_payment",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "No-interest payment",
+      "description": "Payment that avoids interest, in cents"
+    },
+    {
+      "id": "minimum_payment",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Minimum payment",
+      "description": "Minimum payment in cents"
+    },
+    {
+      "id": "payment_due_date",
+      "value_type": "datetime",
+      "cardinality": "one",
+      "label": "Payment due date",
+      "description": "Last day to pay a credit card statement"
+    },
+    {
+      "id": "interest_charged",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Interest charged",
+      "description": "Interest charged in the period, in cents"
+    },
+    {
+      "id": "fees_charged",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Fees charged",
+      "description": "Bank fees in the period, in cents"
+    },
+    {
+      "id": "vat_on_interest_and_fees",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "VAT on interest and fees",
+      "description": "VAT on interest and fees, in cents"
+    },
+    {
+      "id": "reconciled",
+      "value_type": "boolean",
+      "cardinality": "one",
+      "label": "Reconciled",
+      "description": "mxbank reconciled the statement against its balances"
+    },
+    {
+      "id": "paid_amount",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Paid amount",
+      "description": "Payments to a card made by its due date, in cents"
+    },
+    {
+      "id": "shortfall",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Shortfall",
+      "description": "No-interest payment minus what was paid on time, in cents (0 if covered)"
+    },
+    {
+      "id": "covered",
+      "value_type": "boolean",
+      "cardinality": "one",
+      "label": "Covered",
+      "description": "The no-interest payment was paid on time"
+    },
+    {
+      "id": "plan_original_amount",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Plan original amount",
+      "description": "Original amount of an installment plan, in cents"
+    },
+    {
+      "id": "pending_balance",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Pending balance",
+      "description": "Pending balance of an installment plan at a statement, in cents"
+    },
+    {
+      "id": "installments_paid",
+      "value_type": "integer",
+      "cardinality": "one",
+      "label": "Installments paid",
+      "description": "Installment number reached at a statement"
+    },
+    {
+      "id": "monthly_budget",
+      "value_type": "integer",
+      "unit": "MXN_cent",
+      "cardinality": "one",
+      "label": "Monthly budget",
+      "description": "Monthly budget of a category in cents, in force from valid_from"
+    }
+  ],
+  "categories": [
+    {
+      "key": "category:housing",
+      "name": "Housing",
+      "aliases": [
+        "Vivienda"
+      ]
+    },
+    {
+      "key": "category:food",
+      "name": "Food",
+      "aliases": [
+        "Alimentación",
+        "Alimentacion"
+      ]
+    },
+    {
+      "key": "category:transport",
+      "name": "Transport",
+      "aliases": [
+        "Transporte"
+      ]
+    },
+    {
+      "key": "category:health",
+      "name": "Health",
+      "aliases": [
+        "Salud"
+      ]
+    },
+    {
+      "key": "category:education",
+      "name": "Education",
+      "aliases": [
+        "Educación",
+        "Educacion"
+      ]
+    },
+    {
+      "key": "category:entertainment",
+      "name": "Entertainment",
+      "aliases": [
+        "Entretenimiento"
+      ]
+    },
+    {
+      "key": "category:subscriptions",
+      "name": "Subscriptions",
+      "aliases": [
+        "Suscripciones"
+      ]
+    },
+    {
+      "key": "category:personal-shopping",
+      "name": "Personal shopping",
+      "aliases": [
+        "Compras personales"
+      ]
+    },
+    {
+      "key": "category:financial-costs",
+      "name": "Financial costs",
+      "aliases": [
+        "Costos financieros"
+      ]
+    },
+    {
+      "key": "category:income",
+      "name": "Income",
+      "aliases": [
+        "Ingresos"
+      ]
+    },
+    {
+      "key": "category:internal",
+      "name": "Internal movements",
+      "aliases": [
+        "Movimientos internos"
+      ]
+    },
+    {
+      "key": "category:other",
+      "name": "Other",
+      "aliases": [
+        "Otros"
+      ]
+    }
+  ],
+  "subcategories": [
+    {
+      "key": "category:internal/card-payment",
+      "name": "Card payment",
+      "aliases": [
+        "Pago de tarjeta"
+      ]
+    },
+    {
+      "key": "category:internal/transfer",
+      "name": "Own transfer",
+      "aliases": [
+        "Traspaso propio"
+      ]
+    },
+    {
+      "key": "category:internal/cash-withdrawal",
+      "name": "Cash withdrawal",
+      "aliases": [
+        "Retiro de efectivo"
+      ]
+    },
+    {
+      "key": "category:internal/installment-conversion",
+      "name": "Installment conversion",
+      "aliases": [
+        "Traslado a meses"
+      ]
+    },
+    {
+      "key": "category:financial-costs/fees",
+      "name": "Bank fees",
+      "aliases": [
+        "Comisiones"
+      ]
+    },
+    {
+      "key": "category:financial-costs/interest",
+      "name": "Interest paid",
+      "aliases": [
+        "Intereses pagados"
+      ]
+    },
+    {
+      "key": "category:financial-costs/taxes",
+      "name": "Taxes",
+      "aliases": [
+        "Impuestos"
+      ]
+    },
+    {
+      "key": "category:financial-costs/loan-payments",
+      "name": "Loan payments",
+      "aliases": [
+        "Pagos de préstamos"
+      ]
+    },
+    {
+      "key": "category:income/salary",
+      "name": "Salary",
+      "aliases": [
+        "Nómina",
+        "Nomina"
+      ]
+    },
+    {
+      "key": "category:income/interest",
+      "name": "Interest earned",
+      "aliases": [
+        "Intereses ganados"
+      ]
+    }
+  ],
+  "kind_rules": {
+    "card_payment": "category:internal/card-payment",
+    "transfer_internal": "category:internal/transfer",
+    "cash_withdrawal": "category:internal/cash-withdrawal",
+    "installment_conversion": "category:internal/installment-conversion",
+    "fee": "category:financial-costs/fees",
+    "interest": "category:income/interest",
+    "tax": "category:financial-costs/taxes",
+    "tax_payment": "category:financial-costs/taxes",
+    "payroll": "category:income/salary",
+    "loan_payment": "category:financial-costs/loan-payments",
+    "rewards_redemption": "category:income/general"
+  },
+  "ask_kinds": [
+    "spei_in",
+    "spei_out",
+    "spei_refund",
+    "transfer_in",
+    "transfer_out",
+    "cash_deposit"
+  ],
+  "recipes": [
+    {
+      "key": "recipe:spending-by-category",
+      "name": "Net amount by top category",
+      "definition": {
+        "kind": "aggregate",
+        "description": "Net amount per top category between start and end: one-off overrides first, then category rules. Internal movements are excluded.",
+        "parameters": {
+          "start": {
+            "type": "date"
+          },
+          "end": {
+            "type": "date"
+          }
+        },
+        "query": {
+          "event_type": "transaction",
+          "measure": "sum:amount",
+          "by": [
+            "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)/fact:part_of"
+          ],
+          "where": [
+            "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)/fact:part_of != category:internal"
+          ],
+          "since": "{start}",
+          "until": "{end}",
+          "order": "value"
+        }
+      }
+    },
+    {
+      "key": "recipe:spending-by-subcategory",
+      "name": "Net amount by subcategory",
+      "definition": {
+        "kind": "aggregate",
+        "description": "Net amount per subcategory between start and end: one-off overrides first, then category rules. Internal movements are excluded.",
+        "parameters": {
+          "start": {
+            "type": "date"
+          },
+          "end": {
+            "type": "date"
+          }
+        },
+        "query": {
+          "event_type": "transaction",
+          "measure": "sum:amount",
+          "by": [
+            "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)"
+          ],
+          "where": [
+            "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)/fact:part_of != category:internal"
+          ],
+          "since": "{start}",
+          "until": "{end}",
+          "order": "value"
+        }
+      }
+    },
+    {
+      "key": "recipe:overrides",
+      "name": "Transactions with a category override",
+      "definition": {
+        "kind": "list",
+        "description": "Transactions whose category was chosen one by one, between start and end.",
+        "parameters": {
+          "start": {
+            "type": "date"
+          },
+          "end": {
+            "type": "date"
+          }
+        },
+        "query": {
+          "event_type": "transaction",
+          "where": [
+            "has:link-in:recategorizes"
+          ],
+          "columns": [
+            "key",
+            "occurred_at",
+            "attr:amount",
+            "summary",
+            "link-in:recategorizes/link:to_category"
+          ],
+          "since": "{start}",
+          "until": "{end}",
+          "order_by": [
+            "occurred_at"
+          ]
+        }
+      }
+    },
+    {
+      "key": "recipe:uncategorized",
+      "name": "Transactions without category",
+      "definition": {
+        "kind": "list",
+        "description": "Transactions whose merchant, counterparty or kind has no category rule and no override.",
+        "parameters": {},
+        "query": {
+          "event_type": "transaction",
+          "where": [
+            "no:first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)"
+          ],
+          "columns": [
+            "key",
+            "occurred_at",
+            "attr:amount",
+            "summary",
+            "link:classified_by/key"
+          ],
+          "order_by": [
+            "occurred_at"
+          ],
+          "limit": 200
+        }
+      }
+    },
+    {
+      "key": "recipe:monthly-cashflow",
+      "name": "Cash flow by month and top category",
+      "definition": {
+        "kind": "aggregate",
+        "description": "Net amount per month and top category (overrides first, then rules). Income is positive, spending negative.",
+        "parameters": {
+          "start": {
+            "type": "date"
+          },
+          "end": {
+            "type": "date"
+          }
+        },
+        "query": {
+          "event_type": "transaction",
+          "measure": "sum:amount",
+          "by": [
+            "period:month",
+            "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)/fact:part_of"
+          ],
+          "where": [
+            "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)/fact:part_of != category:internal"
+          ],
+          "since": "{start}",
+          "until": "{end}",
+          "order": "group"
+        }
+      }
+    },
+    {
+      "key": "recipe:classifier-history",
+      "name": "Transactions of one merchant, counterparty or kind",
+      "definition": {
+        "kind": "list",
+        "description": "Every transaction classified by one merchant, counterparty or transaction kind.",
+        "parameters": {
+          "who": {
+            "type": "entity"
+          }
+        },
+        "query": {
+          "event_type": "transaction",
+          "where": [
+            "link:classified_by = {who}"
+          ],
+          "columns": [
+            "key",
+            "occurred_at",
+            "attr:amount",
+            "summary",
+            "link:on_account"
+          ],
+          "order_by": [
+            "occurred_at"
+          ],
+          "limit": 500
+        }
+      }
+    },
+    {
+      "key": "recipe:budgets",
+      "name": "Budgets in force",
+      "definition": {
+        "kind": "list",
+        "description": "Categories with a monthly budget in force.",
+        "parameters": {},
+        "query": {
+          "entity_type": "category",
+          "where": [
+            "has:fact:monthly_budget"
+          ],
+          "columns": [
+            "key",
+            "name",
+            "fact:monthly_budget"
+          ],
+          "order_by": [
+            "key"
+          ]
+        }
+      }
+    }
+  ]
+}
