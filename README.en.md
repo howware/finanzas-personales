@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Import your bank statements, categorize, budget and ask questions, all in a conversation with your AI agent.</b><br>
-  100 % local · no personal data · history that is never erased · Claude Code and Codex
+  Privacy by design: your personal data never reaches the AI · 100 % local · Claude Code and Codex
 </p>
 
 <p align="center">
@@ -31,6 +31,32 @@ rest:
 The project targets Mexico: banks supported by mxbank (BBVA debit and credit, BanCoppel debit), MXN, and the
 agent talks in the user's language. Full documentation is in Spanish: see [README.md](README.md).
 
+## Privacy by design
+
+This project started from one question: **how do you use AI with your finances without handing over your
+identity?** A bank statement carries your name, address, tax id, card and account numbers, and the names and
+accounts of the people you pay. Uploading it to an AI chat gives all of that to a third party.
+
+Here **the statement never goes to the AI**. It is read on your computer, everything that identifies you is
+removed right there, and the agent only works with what is left: anonymous transactions.
+
+| 🔒 Stays on your computer, never reaches the AI | What the AI does see, so it can answer you |
+|---|---|
+| The statement PDF, in full | Merchant, amount and date of each transaction |
+| Your name, address, RFC and CURP | Categories, budgets and totals |
+| Card and account numbers, CLABE | Pseudonyms instead of accounts (`ACC_92d5`) and people (`PERSONA_7f3a`) |
+| Names and accounts of the people you pay | Product name and last 4 digits of the account (can be omitted) |
+| The memory file: the agent queries it and only sees the answers | What you type in the conversation |
+
+How it is enforced: the skill forbids the agent from opening the PDF; only mxbank reads it, offline; its output
+is built from a closed list of fields; a final scanner withholds the whole result if it finds anything that
+looks personal; counterparties are pseudonymized with a key only you hold; mxbank, `fin.py` and the memory make
+no network connections; and CI blocks real data from ever being committed.
+
+> **To be precise:** what the agent does see (merchants, amounts, dates, pseudonyms) is sent to your AI
+> provider under its terms. It does not identify you on its own, but it is still information about your
+> spending habits.
+
 ## Features
 
 - **Statement import** that never duplicates, in any order, thanks to mxbank's stable ids.
@@ -57,13 +83,6 @@ python finanzas-personales/tools/install_skill.py
 Set a long random `MXBANK_KEY` environment variable once and back it up: it keeps ids and pseudonyms stable
 across months. Then create a folder for your finances, open Claude Code or Codex there and say
 *"Quiero llevar mis finanzas aquí"* (or the same in English).
-
-## Privacy
-
-The AI never reads the PDF: only mxbank, locally, which removes name, address, tax id, card and account numbers
-and pseudonymizes the people you transfer to. Everything is stored in one SQLite file in your folder, with no
-server or account. What the agent reads is sent to your AI provider under its own terms. CI blocks PDFs,
-databases and personal identifiers from ever being committed.
 
 ## License
 

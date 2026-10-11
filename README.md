@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Importa tus estados de cuenta, categoriza, presupuesta y pregunta, todo en la conversación con tu agente de IA.</b><br>
-  100 % local · sin datos personales · historial que nunca se borra · Claude Code y Codex
+  Privacidad por diseño: tus datos personales nunca llegan a la IA · 100 % local · Claude Code y Codex
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
   <a href="https://proteo5.github.io/finanzas-personales/">Sitio del proyecto</a> ·
   <a href="#instalación">Instalación</a> ·
   <a href="#primeros-pasos">Primeros pasos</a> ·
-  <a href="#privacidad">Privacidad</a> ·
+  <a href="#privacidad-por-diseño">Privacidad por diseño</a> ·
   <a href="README.en.md">English</a>
 </p>
 
@@ -43,10 +43,55 @@ Pendiente: pagar $8,420.15 de BBVA Azul antes del 8 oct.
 Llevas $3,180.40 de $4,000.00 (79 %). Te quedan $819.60 para 9 días.
 ```
 
+## Privacidad por diseño
+
+Este proyecto nació de una pregunta: **¿cómo usar IA con tus finanzas sin entregarle tu identidad?** Un estado
+de cuenta trae tu nombre, domicilio, RFC, números de tarjeta y CLABE, y los nombres y cuentas de las personas a
+las que les transfieres. Subirlo a un chat de IA entrega todo eso a un tercero.
+
+Aquí **el estado de cuenta nunca va a la IA**. Se lee en tu computadora, los datos que te identifican se
+eliminan ahí mismo, y el agente trabaja solo con lo que queda: movimientos anónimos.
+
+```mermaid
+flowchart LR
+    subgraph local["🔒 Tu computadora (nada de esto sale)"]
+        PDF[(Estado de cuenta PDF<br/>nombre · RFC · tarjeta · CLABE)] --> MX[mxbank<br/>lee y elimina<br/>datos personales]
+        MX --> MEM[(Memoria local<br/>SQLite)]
+    end
+    MEM -- "solo movimientos anónimos:<br/>comercio · monto · fecha" --> IA([Agente de IA])
+```
+
+| 🔒 Se queda en tu computadora, nunca llega a la IA | Lo que la IA sí ve, para poder responderte |
+|---|---|
+| El PDF del estado de cuenta, completo | Comercio, monto y fecha de cada movimiento |
+| Tu nombre, domicilio, RFC y CURP | Categorías, presupuestos y totales |
+| Números de tarjeta, de cuenta y CLABE | Seudónimos en lugar de cuentas (`ACC_92d5`) y personas (`PERSONA_7f3a`) |
+| Nombres y cuentas de las personas a las que transfieres | El nombre del producto y los últimos 4 dígitos de la cuenta (se omiten con `--privacy strict`) |
+| Claves de rastreo, referencias y conceptos de transferencias | |
+| El archivo de la memoria: el agente le hace consultas y solo ve las respuestas | |
+
+**Cómo se garantiza** (no es una promesa, es cómo está construido):
+
+1. **La IA nunca abre el PDF.** El skill lo prohíbe expresamente; solo [mxbank](https://github.com/proteo5/mx-bank-statement-reader)
+   lo lee, en tu máquina, sin conexión a internet.
+2. **La salida se arma con una lista cerrada de campos**: no existe un lugar donde quepa tu nombre o tu domicilio.
+3. **Un escáner revisa el resultado completo** buscando CLABEs, tarjetas, RFC, CURP, correos y las palabras de tu
+   nombre y domicilio. **Si duda, no entrega nada.**
+4. **Las personas a las que transfieres se vuelven seudónimos** con una llave que solo tú tienes (`MXBANK_KEY`).
+5. **Todo se guarda en un archivo de tu carpeta**: sin servidor, sin cuenta, sin sincronización. mxbank,
+   `fin.py` y la memoria no hacen ninguna conexión de red.
+6. **Este repositorio no puede recibir datos reales**: una guardia en CI rechaza PDFs, bases de datos, CLABEs,
+   tarjetas, RFC, CURP y correos.
+
+> **Para ser exactos:** lo que el agente sí ve (comercios, montos, fechas, seudónimos) se envía a tu proveedor
+> de IA y queda sujeto a sus términos. No te identifica por sí solo, pero sigue siendo información sobre tus
+> hábitos de gasto. Detalle en [Privacidad](#privacidad) y en el [aviso legal](AVISO-LEGAL.md).
+
 ---
 
 ## Contenido
 
+- [Privacidad por diseño](#privacidad-por-diseño)
 - [Características](#características)
 - [Cómo funciona](#cómo-funciona)
 - [Instalación](#instalación)
@@ -63,6 +108,8 @@ Llevas $3,180.40 de $4,000.00 (79 %). Te quedan $819.60 para 9 días.
 
 ## Características
 
+- **Tus datos personales nunca llegan a la IA.** El estado de cuenta se lee y se anonimiza en tu computadora;
+  el agente solo ve movimientos anónimos. Ver [Privacidad por diseño](#privacidad-por-diseño).
 - **Importa estados de cuenta** de BBVA (débito y crédito) y BanCoppel (débito). Reimportar o importar en
   desorden no duplica nada: cada movimiento tiene un id estable.
 - **Categorías que aprenden.** Corriges un comercio una vez y todo su historial se reclasifica. Las
@@ -168,6 +215,8 @@ excluyen de los reportes: no son gasto. El gasto del efectivo retirado se captur
 
 ## Privacidad
 
+Detalle de cada dato. El resumen está en [Privacidad por diseño](#privacidad-por-diseño).
+
 | Dato | Tratamiento |
 |---|---|
 | El PDF | Nunca lo lee la IA; solo `mxbank`, en tu máquina |
@@ -176,6 +225,7 @@ excluyen de los reportes: no son gasto. El gasto del efectivo retirado se captur
 | Comercio, monto y fecha | Se guardan: es el propósito de la herramienta |
 | La memoria | Un archivo SQLite en tu carpeta: sin servidor, sin cuenta, fuera de git |
 | Reportes | En la conversación o en una carpeta local; nada se publica sin que lo pidas |
+| Lo que tú escribes | Llega a la IA como cualquier mensaje. Si a un seudónimo le pones nombre («PERSONA_7f3a es mi casero»), ese nombre también. No escribas números de cuenta ni contraseñas |
 
 La memoria no está cifrada: protégela como cualquier archivo personal (cifrado de disco, respaldos con
 `memory.py backup`). Este repo tiene una guardia en CI que impide versionar PDFs, bases de datos, CLABEs,
