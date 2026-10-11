@@ -1,49 +1,239 @@
-# finanzas-personales
+<h1 align="center">finanzas-personales · Tus finanzas sin app, con IA</h1>
 
-Lleva tus finanzas personales con un agente de IA (Claude Code o Codex), sin app: importas tus estados de
-cuenta, categorizas, capturas el efectivo, fijas presupuestos y preguntas, todo en la conversación.
+<p align="center">
+  <b>Importa tus estados de cuenta, categoriza, presupuesta y pregunta, todo en la conversación con tu agente de IA.</b><br>
+  100 % local · sin datos personales · historial que nunca se borra · Claude Code y Codex
+</p>
 
-Se apoya en dos herramientas locales:
+<p align="center">
+  <a href="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/versión-0.1.0-blue" alt="Versión 0.1.0">
+  <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/licencia-Apache%202.0-green" alt="Licencia Apache 2.0">
+</p>
 
-- [mxbank](https://github.com/proteo5/mx-bank-statement-reader) ≥ 0.2.0: lee estados de cuenta mexicanos en
-  PDF y entrega JSON sin datos personales, con ids estables.
-- [long-term-memory-for-AI](https://github.com/proteo5/long-term-memory-for-AI) ≥ 0.3.0: memoria SQLite
-  local, solo de agregado, que el agente consulta y actualiza.
+<p align="center">
+  <a href="https://proteo5.github.io/finanzas-personales/">Sitio del proyecto</a> ·
+  <a href="#instalación">Instalación</a> ·
+  <a href="#primeros-pasos">Primeros pasos</a> ·
+  <a href="#privacidad">Privacidad</a> ·
+  <a href="README.en.md">English</a>
+</p>
 
-Este repo agrega el skill `finanzas-personales`: el protocolo para el agente y `fin.py`, que importa el JSON de
-mxbank a la memoria y arma los reportes. Todo corre en tu máquina.
+Una app de finanzas personales es, en el fondo, cuatro cosas: **captura** de movimientos, una **base de datos**,
+**reglas** (categorías, presupuestos) y **pantallas**. Con un agente de IA la pantalla es la conversación, y el
+resto lo hacen tres herramientas locales y abiertas:
+
+| Pieza de una app | Aquí |
+|---|---|
+| Captura | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON sin datos personales |
+| Base de datos | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI): un archivo SQLite local, solo de agregado, con historia |
+| Reglas | **este repo**: el skill `finanzas-personales` y `fin.py` |
+| Pantallas | la conversación con Claude Code o Codex |
+
+```text
+› Importa los estados de estados/septiembre/
+
+3 estados, 142 movimientos nuevos. Todos concilian.
+Pendiente: pagar $8,420.15 de BBVA Azul antes del 8 oct.
+14 comercios nuevos. Propongo: Alimentación › Súper: WALMART, SORIANA … ¿Los apruebo así?
+
+› Sí. ¿Cómo voy con el presupuesto de súper?
+
+Llevas $3,180.40 de $4,000.00 (79 %). Te quedan $819.60 para 9 días.
+```
+
+---
+
+## Contenido
+
+- [Características](#características)
+- [Cómo funciona](#cómo-funciona)
+- [Instalación](#instalación)
+- [Primeros pasos](#primeros-pasos)
+- [Qué le puedes pedir](#qué-le-puedes-pedir)
+- [Categorías](#categorías)
+- [Privacidad](#privacidad)
+- [Referencia de fin.py](#referencia-de-finpy)
+- [Limitaciones](#limitaciones)
+- [Desarrollo](#desarrollo)
+- [Documentación](#documentación)
+- [Hoja de ruta](#hoja-de-ruta)
+- [Licencia](#licencia)
+
+## Características
+
+- **Importa estados de cuenta** de BBVA (débito y crédito) y BanCoppel (débito). Reimportar o importar en
+  desorden no duplica nada: cada movimiento tiene un id estable.
+- **Categorías que aprenden.** Corriges un comercio una vez y todo su historial se reclasifica. Las
+  excepciones de un solo movimiento («eso fue un regalo») no rompen la regla.
+- **Efectivo en una frase.** «Ayer gasté 180 en la fonda» queda registrado con tus palabras como evidencia.
+- **Presupuestos con historia.** Por categoría o subcategoría y por mes; el presupuesto de enero sigue siendo
+  el de enero aunque lo cambies después.
+- **Pagos de tarjeta.** Cada sesión empieza recordándote el pago para no generar intereses y la fecha límite;
+  el pendiente se cierra solo cuando el siguiente estado trae el pago.
+- **Reportes al momento.** Gasto por categoría, mes contra mes, meses sin intereses vigentes, intereses y
+  comisiones pagados, cargos sin categoría.
+- **Nada se borra.** La memoria es solo de agregado: los cambios cierran o anulan, con autor, fecha y motivo.
+- **Sin dependencias.** `fin.py` usa solo la biblioteca estándar de Python.
+
+## Cómo funciona
+
+```mermaid
+flowchart LR
+    PDF[(Estados PDF<br/>en tu carpeta)] --> MX[mxbank extract]
+    MX -- JSON sin datos personales --> FIN[fin.py import]
+    U([Tú]) <--> A[Agente<br/>Claude Code · Codex]
+    SK[skill finanzas-personales] -. enseña .-> A
+    A --> FIN
+    A -- consultas --> MEM[(.memory/memory.sqlite)]
+    FIN --> MEM
+```
+
+1. `mxbank` lee el PDF localmente, concilia las cifras y elimina nombre, RFC, tarjeta, CLABE y datos de terceros.
+2. `fin.py import` guarda cuentas, movimientos, saldos, compras a meses y pagos pendientes en la memoria.
+3. Cada movimiento apunta a su comercio, contraparte o tipo; la **regla de categoría vive ahí**, no en el
+   movimiento, por eso corregirla corrige todo el historial sin reescribir nada.
+4. El agente sigue el protocolo de [`SKILL.md`](skill/finanzas-personales/SKILL.md): propone categorías, te
+   pregunta lo que no sabe y responde con consultas a la memoria.
 
 ## Instalación
 
-Requiere Python 3.9+ y los skills `mxbank` y `project-memory` instalados (ver sus README).
+Requiere Python 3.9+ y, para mxbank, Python 3.12+ con [uv](https://docs.astral.sh/uv/).
 
 ```bash
-# Claude Code (macOS / Linux / Git Bash)
-mkdir -p ~/.claude/skills && cp -r skill/finanzas-personales ~/.claude/skills/
+# 1. mxbank (captura)
+git clone https://github.com/proteo5/mx-bank-statement-reader
+cd mx-bank-statement-reader && uv tool install . && cd ..
+
+# 2. Memoria persistente (almacén)
+git clone https://github.com/proteo5/long-term-memory-for-AI
+python long-term-memory-for-AI/tools/install_skill.py --target ~/.claude/skills/project-memory
+
+# 3. Este skill (reglas)
+git clone https://github.com/proteo5/finanzas-personales
+python finanzas-personales/tools/install_skill.py
 ```
+
+Para Codex, usa `--target ~/.codex/skills/<nombre>` en los pasos 2 y 3. Instala también el skill
+[`mxbank`](https://github.com/proteo5/mx-bank-statement-reader#skill-para-claude-code) para que el agente sepa
+usarlo.
+
+**Llave de seudónimos.** Define una vez la variable de entorno `MXBANK_KEY` con un valor aleatorio largo y
+**respáldala** en tu gestor de contraseñas. Mantiene estables los ids y seudónimos entre meses; si la cambias,
+los movimientos se importarían de nuevo.
 
 ```powershell
-# Claude Code (Windows PowerShell)
-Copy-Item -Recurse -Force skill\finanzas-personales "$HOME\.claude\skills\"
+# Windows (PowerShell): la genera y la guarda sin mostrarla
+$b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Environment]::SetEnvironmentVariable('MXBANK_KEY', [Convert]::ToBase64String($b), 'User')
 ```
 
-Para Codex, copia la misma carpeta a `~/.codex/skills/`.
+```bash
+# macOS / Linux: agrégala a tu perfil de shell
+echo "export MXBANK_KEY='$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')'" >> ~/.zshrc
+```
 
-Define una llave privada y fija para los seudónimos de mxbank, una sola vez (variable de entorno de tu usuario,
-`MXBANK_KEY`). Si la cambias, los ids cambian y los movimientos se importarían de nuevo.
+## Primeros pasos
 
-## Uso
+1. Crea una carpeta para tus finanzas (por ejemplo `~/mis-finanzas`) y pon tus PDF en `estados/`.
+2. Agrega un `CLAUDE.md` (o `AGENTS.md` para Codex) con la instrucción de memoria persistente de
+   [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI#configurar-un-proyecto) y, si
+   usas git, un `.gitignore` con `estados/`, `reportes/` y `.memory/`.
+3. Abre ahí Claude Code o Codex y escribe: *«Quiero llevar mis finanzas aquí.»* El agente te pide tu nombre,
+   crea la memoria y carga las categorías.
+4. *«Importa los estados de `estados/`.»* Revisa y aprueba la propuesta de categorías.
 
-Crea una carpeta para tus finanzas, abre ahí el agente y pídele, por ejemplo:
+## Qué le puedes pedir
 
-- "Quiero llevar mis finanzas aquí." → crea la memoria y carga categorías.
-- "Importa los estados de `estados/2026-09/`." → mxbank + importación; te propone categorías para lo nuevo.
-- "Ayer gasté 180 en efectivo en la fonda."
-- "Pon 4,000 al mes para súper." · "¿Cómo voy este mes?" · "¿Qué tarjetas tengo que pagar?"
-- "Hagamos el cierre de septiembre."
+| Quieres | Dile |
+|---|---|
+| Importar | «Importa los estados de octubre» |
+| Capturar efectivo | «Ayer gasté 180 en efectivo en la fonda» |
+| Corregir una categoría | «OXXO es súper, no conveniencia» · «Lo de Amazon del 18 fue un regalo» |
+| Presupuestar | «Pon 4,000 al mes para súper desde noviembre» |
+| Saber cómo vas | «¿Cuánto gasté en septiembre?» · «¿Cómo voy con el presupuesto?» |
+| Pagos | «¿Qué tarjetas tengo que pagar y cuándo?» · «¿Cuánto pagué de intereses este año?» |
+| Revisar | «¿Qué suscripciones tengo?» · «¿Qué compras a meses me faltan?» |
+| Cerrar el mes | «Hagamos el cierre de septiembre» |
 
-Agrega a `CLAUDE.md` / `AGENTS.md` de esa carpeta la instrucción de memoria persistente del README de
-long-term-memory-for-AI, y a `.gitignore`: `estados/`, `reportes/`, `.memory/`.
+## Categorías
+
+Doce categorías principales fijas, para poder comparar meses: Vivienda, Alimentación, Transporte, Salud,
+Educación, Entretenimiento, Suscripciones, Compras personales, Costos financieros, Ingresos, Otros y
+Movimientos internos. Las **subcategorías y las reglas por comercio se crean conforme importas**: el agente
+las propone y tú las apruebas.
+
+**Movimientos internos** (pago a tu tarjeta, traspasos entre tus cuentas, retiros, traslados a meses) se
+excluyen de los reportes: no son gasto. El gasto del efectivo retirado se captura aparte.
+
+## Privacidad
+
+| Dato | Tratamiento |
+|---|---|
+| El PDF | Nunca lo lee la IA; solo `mxbank`, en tu máquina |
+| Nombre, domicilio, RFC, CURP, tarjeta, CLABE | Los elimina `mxbank` antes de que nada más los vea |
+| Personas a las que transfieres | Seudónimos estables (`PERSONA_7f3a`); tú les pones nombre si quieres |
+| Comercio, monto y fecha | Se guardan: es el propósito de la herramienta |
+| La memoria | Un archivo SQLite en tu carpeta: sin servidor, sin cuenta, fuera de git |
+| Reportes | En la conversación o en una carpeta local; nada se publica sin que lo pidas |
+
+La memoria no está cifrada: protégela como cualquier archivo personal (cifrado de disco, respaldos con
+`memory.py backup`). Este repo tiene una guardia en CI que impide versionar PDFs, bases de datos, CLABEs,
+tarjetas, RFC, CURP o correos.
+
+## Referencia de fin.py
+
+El agente lo usa por ti; esta tabla es para auditar o automatizar. Toda salida es JSON.
+
+| Comando | Hace |
+|---|---|
+| `setup --by person:<id>` | Carga predicados, categorías, reglas por tipo de movimiento y recetas en la memoria |
+| `import ARCHIVO… --by …` | Importa JSON o NDJSON de mxbank (rechaza los generados sin llave) |
+| `categorize --rule merchant:x=category:grupo/sub …` | Guarda reglas comercio, contraparte o tipo → subcategoría |
+| `add-category --key category:grupo/sub --name …` | Crea una subcategoría |
+| `recategorize TX_… --to category:…` | Cambia la categoría de un solo movimiento |
+| `expense --amount 180 --description "…"` | Captura un gasto (o `--income`) en efectivo u otra cuenta |
+| `budget --category … --amount 4000 --month 2026-11` | Fija el presupuesto mensual desde ese mes |
+| `report --month 2026-09 [--level sub]` | Ingresos, gasto y neto por categoría, con presupuesto |
+
+Montos en la memoria: enteros en centavos (`MXN_cent`). Requiere mxbank ≥ 0.2.0 y Long-Term Memory for AI
+≥ 0.3.0; `fin.py` verifica la versión de la memoria.
+
+## Limitaciones
+
+- **Bancos:** los que soporta mxbank (BBVA débito y crédito, BanCoppel débito). Otros bancos se agregan en mxbank.
+- **Solo MXN.** Las compras en otra moneda llegan convertidas por el banco.
+- **Compras pasadas a meses después de hechas** («ALTA PARA MESES»): la compra y sus parcialidades contarían
+  doble; el agente lo detecta y te propone corregirlo.
+- **Comercios no reconocidos por mxbank** se nombran con las dos primeras palabras útiles de la descripción;
+  dos variantes del mismo comercio pueden quedar como dos entradas con la misma categoría.
+- **Una computadora.** Sin sincronización entre equipos ni personas.
+
+Detalle y decisiones de diseño en [docs/02-diseno.md](docs/02-diseno.md).
+
+## Desarrollo
+
+```bash
+git clone https://github.com/proteo5/long-term-memory-for-AI ../long-term-memory-for-AI
+python -m unittest discover -s tests -v
+git ls-files -z | xargs -0 python tools/check_private_data.py
+```
+
+Las pruebas usan una memoria temporal y JSON que mxbank genera a partir de sus **PDFs sintéticos**. Buscan el
+helper de la memoria en `FIN_MEMORY_HELPER`, en `../long-term-memory-for-AI/db/memory.py` o en el skill
+instalado. **Nunca agregues estados de cuenta reales ni su JSON**: la guardia de CI los rechaza. Reglas para
+quien desarrolle con IA: [AGENTS.md](AGENTS.md).
+
+```
+skill/finanzas-personales/
+  SKILL.md            protocolo que sigue el agente
+  scripts/fin.py      importador, reglas, capturas y reportes
+  scripts/seed.json   predicados, categorías, reglas por tipo y recetas
+tools/                instalador del skill y guardia de datos privados
+tests/                pruebas y fixtures sintéticos
+docs/                 análisis y diseño
+site/                 sitio del proyecto (GitHub Pages)
+```
 
 ## Documentación
 
@@ -51,23 +241,20 @@ long-term-memory-for-AI, y a `.gitignore`: `estados/`, `reportes/`, `.memory/`.
 |---|---|
 | [01 · Análisis](docs/01-analisis.md) | Qué hace una app de finanzas personales y cómo se cubre sin app |
 | [02 · Diseño](docs/02-diseno.md) | Decisiones, modelo en la memoria, limitaciones conocidas |
-| [SKILL.md](skill/finanzas-personales/SKILL.md) | El protocolo que sigue el agente |
+| [SKILL.md](skill/finanzas-personales/SKILL.md) | El protocolo del agente |
+| [CHANGELOG](CHANGELOG.md) | Historial de versiones |
+| [Aviso legal](AVISO-LEGAL.md) · [Seguridad](SECURITY.md) | Límites de responsabilidad y reporte privado de problemas |
 
-## Desarrollo
+## Hoja de ruta
 
-```bash
-python -m unittest discover -s tests -v
-```
-
-Las pruebas usan una memoria temporal y JSON generados por mxbank a partir de sus PDFs **sintéticos**. Buscan el
-helper de la memoria en `FIN_MEMORY_HELPER`, en `../long-term-memory-for-AI/db/memory.py` o en el skill instalado.
-Nunca agregues estados de cuenta reales ni sus JSON al repo.
-
-## Aviso
-
-Herramienta de organización personal, sin garantías. No es asesoría financiera, fiscal ni legal; verifica las
-cifras contra tus estados de cuenta.
+- Metas de ahorro, deudas (avalancha / bola de nieve) y patrimonio neto.
+- Detección de cargos recurrentes y aumentos de precio entre meses.
+- Tablero HTML local regenerable desde la memoria.
+- Gastos compartidos y deducibles personales con CFDI.
+- Más bancos, conforme mxbank los soporte.
 
 ## Licencia
 
-[Apache 2.0](LICENSE).
+[Apache 2.0](LICENSE): se distribuye tal cual, sin garantías. Herramienta de organización personal; **no es
+asesoría financiera, fiscal ni legal**. No está afiliado ni respaldado por BBVA México, BanCoppel ni ninguna
+institución financiera. Lee el [aviso legal](AVISO-LEGAL.md).

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.9", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Memoria persistente (long-term-memory-for-AI)
+        uses: actions/checkout@v4
+        with:
+          repository: proteo5/long-term-memory-for-AI
+          path: long-term-memory-for-AI
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Guardia de datos privados (todos los archivos versionados)
+        shell: bash
+        run: git ls-files -z | xargs -0 python tools/check_private_data.py
+
+      - name: Pruebas
+        shell: bash
+        env:
+          FIN_MEMORY_HELPER: ${{ github.workspace }}/long-term-memory-for-AI/db/memory.py
+        run: python -m unittest discover -s tests -v
+
+      - name: El skill se instala y arranca
+        shell: bash
+        run: |
+          python long-term-memory-for-AI/tools/install_skill.py --target "$RUNNER_TEMP/skills/project-memory"
+          python tools/install_skill.py --target "$RUNNER_TEMP/skills/finanzas-personales"
+          mkdir "$RUNNER_TEMP/mis-finanzas" && cd "$RUNNER_TEMP/mis-finanzas"
+          MEM="$RUNNER_TEMP/skills/project-memory/scripts/memory.py"
+          FIN="$RUNNER_TEMP/skills/finanzas-personales/scripts/fin.py"
+          python "$MEM" init --owner-name "CI" --owner-key person:ci
+          python "$FIN" --mem "$MEM" setup --by person:ci
+          python "$FIN" --mem "$MEM" import "$GITHUB_WORKSPACE"/tests/fixtures/*.json --by person:ci
+          python "$FIN" --mem "$MEM" report --month 2026-09

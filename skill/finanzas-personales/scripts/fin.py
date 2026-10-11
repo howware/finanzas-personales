@@ -28,6 +28,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
+__version__ = "0.1.0"
 HERE = Path(__file__).resolve().parent
 SEED = HERE / "seed.json"
 MIN_SCHEMA = (1, 1)
@@ -553,6 +554,7 @@ def cmd_report(mem: Mem, args) -> dict:
 # -- CLI --------------------------------------------------------------------------------
 def main() -> None:
     p = argparse.ArgumentParser(prog="fin.py", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--version", action="version", version=f"fin.py {__version__}")
     p.add_argument("--mem", help="Ruta a memory.py (por omisión, el skill project-memory instalado)")
     p.add_argument("--db", help="Ruta a la memoria (por omisión, la del proyecto actual)")
     p.add_argument("--tz", default=os.environ.get("FIN_TZ") or local_offset(), help="Desfase de la zona horaria, p. ej. --tz=-06:00 (por omisión, la del sistema)")
