@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version 0.2.0">
+  <img src="https://img.shields.io/badge/version-0.2.1-blue" alt="Version 0.2.1">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="Apache 2.0 license">
@@ -95,6 +95,8 @@ python long-term-memory-for-AI/tools/install_skill.py --target ~/.claude/skills/
 git clone https://github.com/howware/finanzas-personales
 python finanzas-personales/tools/install_skill.py
 ```
+
+**Tested on Claude Code.** It is written for Codex too, but has not been tested there yet.
 
 Set a long random `MXBANK_KEY` environment variable once and back it up: it keeps ids and pseudonyms stable
 across months. Then create a folder for your finances, open Claude Code or Codex there and say

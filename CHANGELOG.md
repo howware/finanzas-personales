@@ -2,6 +2,11 @@
 
 Todos los cambios relevantes. Las versiones siguen [Semantic Versioning](https://semver.org/lang/es/).
 
+## 0.2.1
+
+- `howware.json` declara solo los anfitriones probados: `claude-code`. Se probó con estados de cuenta reales en
+  Claude Code; Codex se agregará cuando se pruebe.
+
 ## 0.2.0 — howware conforme
 
 - finanzas-personales es el primer [howware](https://howware.org) y cumple la especificación 0.1: manifiesto

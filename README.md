@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/versión-0.2.0-blue" alt="Versión 0.2.0">
+  <img src="https://img.shields.io/badge/versión-0.2.1-blue" alt="Versión 0.2.1">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/licencia-Apache%202.0-green" alt="Licencia Apache 2.0">
@@ -193,7 +193,7 @@ git clone https://github.com/howware/finanzas-personales
 python finanzas-personales/tools/install_skill.py
 ```
 
-Para Codex, usa `--target ~/.codex/skills/<nombre>` en los pasos 2 y 3. Instala también el skill
+**Probado en Claude Code.** Está escrito también para Codex, pero aún no se ha probado ahí. Para Codex, usa `--target ~/.codex/skills/<nombre>` en los pasos 2 y 3. Instala también el skill
 [`mxbank`](https://github.com/howware/mx-bank-statement-reader#skill-para-claude-code) para que el agente sepa
 usarlo.
 
