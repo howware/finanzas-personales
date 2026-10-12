@@ -2,13 +2,13 @@
 
 <p align="center">
   <b>Importa tus estados de cuenta, categoriza, presupuesta y pregunta, todo en la conversación con tu agente de IA.</b><br>
-  Privacidad por diseño · lectura y almacenamiento en tu computadora · código abierto y auditable · Claude Code y Codex
+  Privacidad por diseño · lectura y almacenamiento en tu computadora · código abierto y auditable · probado en Claude Code
 </p>
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/versión-0.2.1-blue" alt="Versión 0.2.1">
-  <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
+  <img src="https://img.shields.io/badge/versión-0.2.2-blue" alt="Versión 0.2.2">
+  <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.2-5a45d6" alt="howware 0.2"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/licencia-Apache%202.0-green" alt="Licencia Apache 2.0">
 </p>
@@ -29,14 +29,15 @@
 
 Una app de finanzas personales es, en el fondo, cuatro cosas: **captura** de movimientos, una **base de datos**,
 **reglas** (categorías, presupuestos) y **pantallas**. Con un agente de IA la pantalla es la conversación, y el
-resto lo hacen tres herramientas locales y abiertas:
+resto lo hacen piezas locales y abiertas: dos [adaptadores](https://howware.org/es/) compartidos (uno lee el
+banco, el otro guarda la memoria) y la herramienta propia de este howware:
 
 | Pieza de una app | Aquí |
 |---|---|
-| Captura | [mxbank](https://github.com/howware/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON anonimizado |
-| Base de datos | [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI): un archivo SQLite local, solo de agregado, con historia |
-| Reglas | **este repo**: el skill `finanzas-personales` y `fin.py` |
-| Pantallas | la conversación con Claude Code o Codex |
+| Captura | Adaptador [mxbank](https://github.com/howware/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON anonimizado |
+| Base de datos | Adaptador de memoria [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI): un archivo SQLite local, solo de agregado, con historia |
+| Reglas | **este repo**: el skill `finanzas-personales` (protocolo) y su herramienta `fin.py` |
+| Pantallas | la conversación con Claude Code |
 
 ```text
 › Importa los estados de estados/septiembre/

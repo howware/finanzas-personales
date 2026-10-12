@@ -28,7 +28,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 HERE = Path(__file__).resolve().parent
 SEED = HERE / "seed.json"
 MIN_SCHEMA = (1, 1)

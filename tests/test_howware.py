@@ -1,4 +1,4 @@
-"""Conformidad con la especificación howware 0.1 (https://howware.org): manifiesto, versiones y protocolo."""
+"""Conformidad con la especificación howware 0.2 (https://howware.org): manifiesto, versiones y protocolo."""
 
 from __future__ import annotations
 

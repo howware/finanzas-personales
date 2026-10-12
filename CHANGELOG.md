@@ -2,6 +2,12 @@
 
 Todos los cambios relevantes. Las versiones siguen [Semantic Versioning](https://semver.org/lang/es/).
 
+## 0.2.2
+
+- Cumple la [especificación howware 0.2](https://github.com/howware/howware/blob/main/docs/es/especificacion.md):
+  `howware.json` lista mxbank y la memoria como **adaptadores** (`adapters`), y `tools` solo trae la herramienta
+  propia, `fin.py`. Los README explican las piezas con esa misma terminología.
+
 ## 0.2.1
 
 - `howware.json` declara solo los anfitriones probados: `claude-code`. Se probó con estados de cuenta reales en

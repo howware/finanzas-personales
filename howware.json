@@ -1,20 +1,17 @@
 {
-  "howware": "0.1",
+  "howware": "0.2",
   "name": "finanzas-personales",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Personal finances without an app: import Mexican bank statements, categories that learn as rules, cash in a sentence, budgets with history, card payment reminders and monthly close.",
   "license": "Apache-2.0",
   "languages": ["es"],
   "hosts": ["claude-code"],
   "skill": "skill/finanzas-personales",
-  "requires": [
+  "adapters": [
     {"name": "mxbank", "version": ">=0.2.0", "url": "https://github.com/howware/mx-bank-statement-reader"},
     {"name": "project-memory", "version": ">=0.3.0", "url": "https://github.com/howware/long-term-memory-for-AI"}
   ],
-  "tools": [
-    {"name": "fin.py", "network": false, "dependencies": []},
-    {"name": "mxbank", "network": false, "dependencies": ["pdfplumber", "pydantic", "typer"], "external": true}
-  ],
+  "tools": [{"name": "fin.py", "network": false, "dependencies": []}],
   "memory": {"kind": "local-sqlite", "append_only": true, "seed_version": "2"},
   "privacy": {
     "stays_local": [

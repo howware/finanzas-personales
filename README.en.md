@@ -2,13 +2,13 @@
 
 <p align="center">
   <b>Import your bank statements, categorize, budget and ask questions, all in a conversation with your AI agent.</b><br>
-  Privacy by design · read and stored on your computer · open source and auditable · Claude Code and Codex
+  Privacy by design · read and stored on your computer · open source and auditable · tested on Claude Code
 </p>
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/version-0.2.1-blue" alt="Version 0.2.1">
-  <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
+  <img src="https://img.shields.io/badge/version-0.2.2-blue" alt="Version 0.2.2">
+  <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.2-5a45d6" alt="howware 0.2"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="Apache 2.0 license">
 </p>
@@ -25,15 +25,16 @@
 > [`howware.json`](howware.json).
 
 A personal finance app is four things: **capture** of transactions, a **database**, **rules** (categories,
-budgets) and **screens**. With an AI agent the screen is the conversation, and three local, open tools do the
-rest:
+budgets) and **screens**. With an AI agent the screen is the conversation, and local, open pieces do the rest:
+two shared [adapters](https://howware.org) (one reads the bank, the other keeps the memory) and this howware's own
+tool:
 
 | App piece | Here |
 |---|---|
-| Capture | [mxbank](https://github.com/howware/mx-bank-statement-reader): reads Mexican bank statement PDFs on your machine and outputs anonymized JSON |
-| Database | [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI): a local, append-only SQLite file with history |
-| Rules | **this repo**: the `finanzas-personales` skill and `fin.py` |
-| Screens | the conversation with Claude Code or Codex |
+| Capture | The [mxbank](https://github.com/howware/mx-bank-statement-reader) adapter: reads Mexican bank statement PDFs on your machine and outputs anonymized JSON |
+| Database | The [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI) memory adapter: a local, append-only SQLite file with history |
+| Rules | **this repo**: the `finanzas-personales` skill (protocol) and its tool `fin.py` |
+| Screens | the conversation with Claude Code |
 
 The project targets Mexico: banks supported by mxbank (BBVA debit and credit, BanCoppel debit), MXN, and the
 agent talks in the user's language. Full documentation is in Spanish: see [README.md](README.md).
