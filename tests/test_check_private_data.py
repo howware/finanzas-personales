@@ -55,7 +55,10 @@ class GuardTest(unittest.TestCase):
 
     def test_repository_is_clean(self):
         root = Path(__file__).resolve().parents[1]
-        files = [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts and "__pycache__" not in p.parts]
+        # CI checks out the adapters inside the workspace; they are other repositories with their own guards
+        others = {"long-term-memory-for-AI", "mx-bank-statement-reader"}
+        files = [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts and "__pycache__" not in p.parts
+                 and p.relative_to(root).parts[0] not in others]
         self.assertEqual([f for p in files for f in guard.findings(p.relative_to(root))
                           if not str(p.relative_to(root)).startswith(("estados", "reportes", ".memory"))], [])
 
