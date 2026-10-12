@@ -14,21 +14,21 @@ jobs:
         python: ["3.9", "3.13"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Memoria persistente (long-term-memory-for-AI)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: howware/long-term-memory-for-AI
           path: long-term-memory-for-AI
 
       - name: Adaptador mxbank (solo para comparar la copia de sus registros comunes)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: howware/mx-bank-statement-reader
           path: mx-bank-statement-reader
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
 
