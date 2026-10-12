@@ -25,7 +25,7 @@ obtengan son responsabilidad de quien los produce y los usa. El agente no es un 
 
 ## 3. Exactitud de los datos
 
-- Los movimientos vienen de [mxbank](https://github.com/proteo5/mx-bank-statement-reader), que puede contener
+- Los movimientos vienen de [mxbank](https://github.com/howware/mx-bank-statement-reader), que puede contener
   **errores u omisiones**; su conciliación contable reduce ese riesgo, pero no lo elimina.
 - Las categorías, presupuestos y reportes dependen de reglas que **propone una IA** y apruebas tú: pueden estar
   mal clasificados. Los recordatorios de pago dependen de que importes tus estados a tiempo.
@@ -49,7 +49,7 @@ familiares, empleados), **tú eres responsable** de cumplir la legislación apli
 la Ley Federal de Protección de Datos Personales en Posesión de los Particulares y su normativa secundaria
 (consentimiento expreso para datos financieros, aviso de privacidad, medidas de seguridad y reglas para
 transferir datos a terceros como un proveedor de IA). Consulta el
-[aviso legal de mxbank](https://github.com/proteo5/mx-bank-statement-reader/blob/main/AVISO-LEGAL.md).
+[aviso legal de mxbank](https://github.com/howware/mx-bank-statement-reader/blob/main/AVISO-LEGAL.md).
 
 ## 6. Marcas
 

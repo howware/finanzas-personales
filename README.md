@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/versión-0.2.0-blue" alt="Versión 0.2.0">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://proteo5.github.io/finanzas-personales/">Sitio del proyecto</a> ·
+  <a href="https://howware.org/finanzas-personales/">Sitio del proyecto</a> ·
   <a href="#instalación">Instalación</a> ·
   <a href="#primeros-pasos">Primeros pasos</a> ·
   <a href="#privacidad-por-diseño">Privacidad por diseño</a> ·
@@ -24,7 +24,7 @@
 > **El primer [howware](https://howware.org).** Un howware es tu saber hacer, puesto a trabajar con IA: dices las
 > reglas con tus palabras y un agente las sigue, con unas cuantas herramientas exactas y una memoria tuya. Sin app
 > que construir, sin intermediarios, sin esperas. Este repo cumple la
-> [especificación howware 0.1](https://github.com/proteo5/howware/blob/main/docs/es/especificacion.md); su
+> [especificación howware 0.1](https://github.com/howware/howware/blob/main/docs/es/especificacion.md); su
 > manifiesto es [`howware.json`](howware.json).
 
 Una app de finanzas personales es, en el fondo, cuatro cosas: **captura** de movimientos, una **base de datos**,
@@ -33,8 +33,8 @@ resto lo hacen tres herramientas locales y abiertas:
 
 | Pieza de una app | Aquí |
 |---|---|
-| Captura | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON anonimizado |
-| Base de datos | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI): un archivo SQLite local, solo de agregado, con historia |
+| Captura | [mxbank](https://github.com/howware/mx-bank-statement-reader): lee el PDF del banco en tu máquina y entrega JSON anonimizado |
+| Base de datos | [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI): un archivo SQLite local, solo de agregado, con historia |
 | Reglas | **este repo**: el skill `finanzas-personales` y `fin.py` |
 | Pantallas | la conversación con Claude Code o Codex |
 
@@ -83,12 +83,12 @@ flowchart LR
 
 | Medida | Dónde comprobarlo |
 |---|---|
-| El skill le prohíbe al agente abrir o leer el PDF; solo `mxbank` lo lee | [SKILL.md](skill/finanzas-personales/SKILL.md#reglas-no-negociables) · [skill de mxbank](https://github.com/proteo5/mx-bank-statement-reader/blob/main/.claude/skills/mxbank/SKILL.md) |
-| La salida de mxbank se arma con una lista cerrada de campos: no hay dónde quepa tu nombre o domicilio | [models/statement.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/models/statement.py) |
-| Un escáner revisa el resultado completo (CLABE, tarjeta, RFC, CURP, correo y las palabras de tu nombre y domicilio) y, si sospecha, **no entrega nada** | [privacy/residual_scan.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/residual_scan.py) · [privacy/detectors.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/detectors.py) |
-| Las personas a las que transfieres se vuelven seudónimos con una llave que solo tú tienes | [privacy/pseudonym.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/pseudonym.py) |
-| mxbank, `fin.py` y la memoria no abren conexiones de red; las pruebas de mxbank fallan si algo lo intenta | [tests/conftest.py](https://github.com/proteo5/mx-bank-statement-reader/blob/main/tests/conftest.py) · [fin.py](skill/finanzas-personales/scripts/fin.py) · [memoria](https://github.com/proteo5/long-term-memory-for-AI#tus-datos) |
-| Todo se guarda en un archivo SQLite de tu carpeta: sin servidor ni cuenta | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI) |
+| El skill le prohíbe al agente abrir o leer el PDF; solo `mxbank` lo lee | [SKILL.md](skill/finanzas-personales/SKILL.md#reglas-no-negociables) · [skill de mxbank](https://github.com/howware/mx-bank-statement-reader/blob/main/.claude/skills/mxbank/SKILL.md) |
+| La salida de mxbank se arma con una lista cerrada de campos: no hay dónde quepa tu nombre o domicilio | [models/statement.py](https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/models/statement.py) |
+| Un escáner revisa el resultado completo (CLABE, tarjeta, RFC, CURP, correo y las palabras de tu nombre y domicilio) y, si sospecha, **no entrega nada** | [privacy/residual_scan.py](https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/privacy/residual_scan.py) · [privacy/detectors.py](https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/privacy/detectors.py) |
+| Las personas a las que transfieres se vuelven seudónimos con una llave que solo tú tienes | [privacy/pseudonym.py](https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/privacy/pseudonym.py) |
+| mxbank, `fin.py` y la memoria no abren conexiones de red; las pruebas de mxbank fallan si algo lo intenta | [tests/conftest.py](https://github.com/howware/mx-bank-statement-reader/blob/main/tests/conftest.py) · [fin.py](skill/finanzas-personales/scripts/fin.py) · [memoria](https://github.com/howware/long-term-memory-for-AI#tus-datos) |
+| Todo se guarda en un archivo SQLite de tu carpeta: sin servidor ni cuenta | [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI) |
 | Este repositorio rechaza en CI PDFs, bases de datos e identificadores personales | [tools/check_private_data.py](tools/check_private_data.py) |
 
 ### Lo que no podemos garantizar
@@ -111,7 +111,7 @@ No te pedimos confianza: te pedimos que lo revises. Las tres piezas son **códig
 son pequeñas a propósito. `fin.py` son unas 600 líneas de Python sin dependencias, y el protocolo del agente es
 un archivo de texto que puedes leer en cinco minutos.
 
-- [finanzas-personales](https://github.com/proteo5/finanzas-personales) · [mxbank](https://github.com/proteo5/mx-bank-statement-reader) · [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI)
+- [finanzas-personales](https://github.com/howware/finanzas-personales) · [mxbank](https://github.com/howware/mx-bank-statement-reader) · [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI)
 - Si encuentras una forma en que un dato personal llegue a la IA, o cualquier otro problema de privacidad,
   repórtalo de forma privada siguiendo [SECURITY.md](SECURITY.md). Tiene prioridad sobre cualquier otro cambio.
 
@@ -181,20 +181,20 @@ Requiere Python 3.9+ y, para mxbank, Python 3.12+ con [uv](https://docs.astral.s
 
 ```bash
 # 1. mxbank (captura)
-git clone https://github.com/proteo5/mx-bank-statement-reader
+git clone https://github.com/howware/mx-bank-statement-reader
 cd mx-bank-statement-reader && uv tool install . && cd ..
 
 # 2. Memoria persistente (almacén)
-git clone https://github.com/proteo5/long-term-memory-for-AI
+git clone https://github.com/howware/long-term-memory-for-AI
 python long-term-memory-for-AI/tools/install_skill.py --target ~/.claude/skills/project-memory
 
 # 3. Este skill (reglas)
-git clone https://github.com/proteo5/finanzas-personales
+git clone https://github.com/howware/finanzas-personales
 python finanzas-personales/tools/install_skill.py
 ```
 
 Para Codex, usa `--target ~/.codex/skills/<nombre>` en los pasos 2 y 3. Instala también el skill
-[`mxbank`](https://github.com/proteo5/mx-bank-statement-reader#skill-para-claude-code) para que el agente sepa
+[`mxbank`](https://github.com/howware/mx-bank-statement-reader#skill-para-claude-code) para que el agente sepa
 usarlo.
 
 **Llave de seudónimos.** Define una vez la variable de entorno `MXBANK_KEY` con un valor aleatorio largo y
@@ -215,7 +215,7 @@ echo "export MXBANK_KEY='$(python3 -c 'import secrets; print(secrets.token_urlsa
 
 1. Crea una carpeta para tus finanzas (por ejemplo `~/mis-finanzas`) y pon tus PDF en `estados/`.
 2. Agrega un `CLAUDE.md` (o `AGENTS.md` para Codex) con la instrucción de memoria persistente de
-   [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI#configurar-un-proyecto) y, si
+   [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI#configurar-un-proyecto) y, si
    usas git, un `.gitignore` con `estados/`, `reportes/` y `.memory/`.
 3. *(Recomendado en Claude Code)* refuerza la regla de no leer PDFs con un permiso en
    `.claude/settings.json` de esa carpeta. Bloquea la herramienta de lectura de archivos, no los comandos de
@@ -304,7 +304,7 @@ Detalle y decisiones de diseño en [docs/02-diseno.md](docs/02-diseno.md).
 ## Desarrollo
 
 ```bash
-git clone https://github.com/proteo5/long-term-memory-for-AI ../long-term-memory-for-AI
+git clone https://github.com/howware/long-term-memory-for-AI ../long-term-memory-for-AI
 python -m unittest discover -s tests -v
 git ls-files -z | xargs -0 python tools/check_private_data.py
 ```

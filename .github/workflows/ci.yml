@@ -19,7 +19,7 @@ jobs:
       - name: Memoria persistente (long-term-memory-for-AI)
         uses: actions/checkout@v4
         with:
-          repository: proteo5/long-term-memory-for-AI
+          repository: howware/long-term-memory-for-AI
           path: long-term-memory-for-AI
 
       - uses: actions/setup-python@v5

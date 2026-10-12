@@ -20,8 +20,8 @@ herramienta, el protocolo está en [skill/finanzas-personales/SKILL.md](skill/fi
 
 | Cambio | Repositorio |
 |---|---|
-| Leer un banco nuevo, anonimizar, conciliar, ids | [mxbank](https://github.com/proteo5/mx-bank-statement-reader) |
-| Almacenar, consultar, vigencia, rutas, recetas | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI) (genérico: nada de finanzas ahí) |
+| Leer un banco nuevo, anonimizar, conciliar, ids | [mxbank](https://github.com/howware/mx-bank-statement-reader) |
+| Almacenar, consultar, vigencia, rutas, recetas | [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI) (genérico: nada de finanzas ahí) |
 | Categorías, importación, reportes, protocolo del agente | este repositorio |
 
 Si algo de finanzas necesita rodear un límite de la memoria o de mxbank, documenta la limitación en
@@ -41,7 +41,7 @@ Si algo de finanzas necesita rodear un límite de la memoria o de mxbank, docume
 ## Comandos
 
 ```bash
-git clone https://github.com/proteo5/long-term-memory-for-AI ../long-term-memory-for-AI
+git clone https://github.com/howware/long-term-memory-for-AI ../long-term-memory-for-AI
 python -m unittest discover -s tests -v                    # pruebas (memoria real, fixtures sintéticos)
 git ls-files -z | xargs -0 python tools/check_private_data.py   # guardia de datos privados
 python tools/install_skill.py                              # instala el skill en ~/.claude/skills

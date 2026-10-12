@@ -204,7 +204,7 @@
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#que-hace">Qué hace</a>
       <a href="#instalacion">Instalación</a>
-      <a class="gh" href="https://github.com/proteo5/finanzas-personales">GitHub</a>
+      <a class="gh" href="https://github.com/howware/finanzas-personales">GitHub</a>
     </nav>
   </div>
 </header>
@@ -296,12 +296,12 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
 
       <h3 style="margin:0 0 14px;font-size:18px">Cómo está construido, y dónde comprobarlo</h3>
       <ol class="how">
-        <li><b>El agente tiene prohibido abrir el PDF</b>El skill se lo prohíbe; solo mxbank lo lee, en tu máquina. <a href="https://github.com/proteo5/finanzas-personales/blob/main/skill/finanzas-personales/SKILL.md#reglas-no-negociables">Ver la regla →</a></li>
-        <li><b>Lista cerrada de campos</b>La salida de mxbank no tiene ningún lugar donde quepa tu nombre o tu domicilio. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/models/statement.py">Ver el modelo →</a></li>
-        <li><b>Si sospecha, no entrega nada</b>Un escáner revisa el resultado completo: CLABE, tarjeta, RFC, CURP, correo y las palabras de tu nombre y domicilio. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/residual_scan.py">Ver el escáner →</a></li>
-        <li><b>Seudónimos con tu llave</b>Las personas a las que transfieres se vuelven <code>PERSONA_…</code> con una llave que solo tú tienes. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/src/mxbank/privacy/pseudonym.py">Ver el código →</a></li>
-        <li><b>Sin servidor ni conexiones</b>mxbank, fin.py y la memoria no abren conexiones de red; las pruebas de mxbank fallan si algo lo intenta. <a href="https://github.com/proteo5/mx-bank-statement-reader/blob/main/tests/conftest.py">Ver la prueba →</a></li>
-        <li><b>El repositorio tiene una guardia</b>CI rechaza PDFs, bases de datos e identificadores personales en cualquier archivo. <a href="https://github.com/proteo5/finanzas-personales/blob/main/tools/check_private_data.py">Ver la guardia →</a></li>
+        <li><b>El agente tiene prohibido abrir el PDF</b>El skill se lo prohíbe; solo mxbank lo lee, en tu máquina. <a href="https://github.com/howware/finanzas-personales/blob/main/skill/finanzas-personales/SKILL.md#reglas-no-negociables">Ver la regla →</a></li>
+        <li><b>Lista cerrada de campos</b>La salida de mxbank no tiene ningún lugar donde quepa tu nombre o tu domicilio. <a href="https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/models/statement.py">Ver el modelo →</a></li>
+        <li><b>Si sospecha, no entrega nada</b>Un escáner revisa el resultado completo: CLABE, tarjeta, RFC, CURP, correo y las palabras de tu nombre y domicilio. <a href="https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/privacy/residual_scan.py">Ver el escáner →</a></li>
+        <li><b>Seudónimos con tu llave</b>Las personas a las que transfieres se vuelven <code>PERSONA_…</code> con una llave que solo tú tienes. <a href="https://github.com/howware/mx-bank-statement-reader/blob/main/src/mxbank/privacy/pseudonym.py">Ver el código →</a></li>
+        <li><b>Sin servidor ni conexiones</b>mxbank, fin.py y la memoria no abren conexiones de red; las pruebas de mxbank fallan si algo lo intenta. <a href="https://github.com/howware/mx-bank-statement-reader/blob/main/tests/conftest.py">Ver la prueba →</a></li>
+        <li><b>El repositorio tiene una guardia</b>CI rechaza PDFs, bases de datos e identificadores personales en cualquier archivo. <a href="https://github.com/howware/finanzas-personales/blob/main/tools/check_private_data.py">Ver la guardia →</a></li>
       </ol>
 
       <div class="split" style="margin:32px 0 0">
@@ -318,10 +318,10 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
           <h3>Código abierto, para que lo revises</h3>
           <p style="margin:0 0 12px;color:var(--text-2);font-size:15px">No te pedimos confianza: te pedimos que lo revises. Las tres piezas son <b>Apache 2.0</b> y pequeñas a propósito; <code>fin.py</code> son unas 600 líneas sin dependencias y el protocolo del agente es un archivo de texto.</p>
           <ul style="list-style:none;padding:0">
-            <li>→ <a href="https://github.com/proteo5/finanzas-personales">finanzas-personales</a></li>
-            <li>→ <a href="https://github.com/proteo5/mx-bank-statement-reader">mxbank</a></li>
-            <li>→ <a href="https://github.com/proteo5/long-term-memory-for-AI">Long-Term Memory for AI</a></li>
-            <li>→ ¿Encontraste un problema de privacidad? <a href="https://github.com/proteo5/finanzas-personales/blob/main/SECURITY.md">Repórtalo en privado</a></li>
+            <li>→ <a href="https://github.com/howware/finanzas-personales">finanzas-personales</a></li>
+            <li>→ <a href="https://github.com/howware/mx-bank-statement-reader">mxbank</a></li>
+            <li>→ <a href="https://github.com/howware/long-term-memory-for-AI">Long-Term Memory for AI</a></li>
+            <li>→ ¿Encontraste un problema de privacidad? <a href="https://github.com/howware/finanzas-personales/blob/main/SECURITY.md">Repórtalo en privado</a></li>
           </ul>
         </div>
       </div>
@@ -400,9 +400,9 @@ Amazon siguen en Compras personales.
       <h2>Tres herramientas abiertas y auditables</h2>
       <p class="sub">Cada una sirve sola; juntas reemplazan una app de finanzas. Todas son código abierto bajo Apache 2.0.</p>
       <div class="tools">
-        <div class="tool"><span class="tag">Captura</span><h3>mxbank</h3><p>Estados de cuenta de bancos mexicanos en PDF a JSON anonimizado y conciliado, con ids estables entre meses.</p><a href="https://github.com/proteo5/mx-bank-statement-reader">proteo5/mx-bank-statement-reader →</a></div>
-        <div class="tool"><span class="tag">Almacén</span><h3>Long-Term Memory for AI</h3><p>Memoria persistente para agentes: hechos con vigencia, eventos, consultas sin SQL y respaldo verificado.</p><a href="https://github.com/proteo5/long-term-memory-for-AI">proteo5/long-term-memory-for-AI →</a></div>
-        <div class="tool"><span class="tag">Reglas</span><h3>finanzas-personales</h3><p>El skill que une las dos: importador, categorías, presupuestos, pagos de tarjeta y reportes.</p><a href="https://github.com/proteo5/finanzas-personales">proteo5/finanzas-personales →</a></div>
+        <div class="tool"><span class="tag">Captura</span><h3>mxbank</h3><p>Estados de cuenta de bancos mexicanos en PDF a JSON anonimizado y conciliado, con ids estables entre meses.</p><a href="https://github.com/howware/mx-bank-statement-reader">howware/mx-bank-statement-reader →</a></div>
+        <div class="tool"><span class="tag">Almacén</span><h3>Long-Term Memory for AI</h3><p>Memoria persistente para agentes: hechos con vigencia, eventos, consultas sin SQL y respaldo verificado.</p><a href="https://github.com/howware/long-term-memory-for-AI">howware/long-term-memory-for-AI →</a></div>
+        <div class="tool"><span class="tag">Reglas</span><h3>finanzas-personales</h3><p>El skill que une las dos: importador, categorías, presupuestos, pagos de tarjeta y reportes.</p><a href="https://github.com/howware/finanzas-personales">howware/finanzas-personales →</a></div>
       </div>
     </div>
   </section>
@@ -413,14 +413,14 @@ Amazon siguen en Compras personales.
         <h2>Instalación</h2>
         <p class="sub">Requiere Python 3.9+ (3.12+ para mxbank) y <a href="https://docs.astral.sh/uv/">uv</a>. Funciona en Windows, macOS y Linux.</p>
         <h3>1 · mxbank</h3>
-<pre>git clone https://github.com/proteo5/mx-bank-statement-reader
+<pre>git clone https://github.com/howware/mx-bank-statement-reader
 cd mx-bank-statement-reader && uv tool install .</pre>
         <h3>2 · Memoria persistente</h3>
-<pre>git clone https://github.com/proteo5/long-term-memory-for-AI
+<pre>git clone https://github.com/howware/long-term-memory-for-AI
 python long-term-memory-for-AI/tools/install_skill.py \
   --target ~/.claude/skills/project-memory</pre>
         <h3>3 · Este skill</h3>
-<pre>git clone https://github.com/proteo5/finanzas-personales
+<pre>git clone https://github.com/howware/finanzas-personales
 python finanzas-personales/tools/install_skill.py</pre>
       </div>
       <div>
@@ -440,10 +440,10 @@ python finanzas-personales/tools/install_skill.py</pre>
   <div class="wrap">
     <p>finanzas-personales es un <a href="https://howware.org">howware</a>: tu saber hacer, puesto a trabajar con IA. Apache 2.0. No está afiliado ni respaldado por BBVA México, BanCoppel ni ninguna institución financiera.</p>
     <nav>
-      <a href="https://github.com/proteo5/finanzas-personales">GitHub</a>
-      <a href="https://github.com/proteo5/finanzas-personales/blob/main/docs/01-analisis.md">Análisis</a>
-      <a href="https://github.com/proteo5/finanzas-personales/blob/main/docs/02-diseno.md">Diseño</a>
-      <a href="https://github.com/proteo5/finanzas-personales/blob/main/AVISO-LEGAL.md">Aviso legal</a>
+      <a href="https://github.com/howware/finanzas-personales">GitHub</a>
+      <a href="https://github.com/howware/finanzas-personales/blob/main/docs/01-analisis.md">Análisis</a>
+      <a href="https://github.com/howware/finanzas-personales/blob/main/docs/02-diseno.md">Diseño</a>
+      <a href="https://github.com/howware/finanzas-personales/blob/main/AVISO-LEGAL.md">Aviso legal</a>
     </nav>
   </div>
 </footer>

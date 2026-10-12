@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/proteo5/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version 0.2.0">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.1-5a45d6" alt="howware 0.1"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
@@ -14,14 +14,14 @@
 </p>
 
 <p align="center">
-  <a href="https://proteo5.github.io/finanzas-personales/">Project site</a> ·
+  <a href="https://howware.org/finanzas-personales/">Project site</a> ·
   <a href="README.md">Español</a>
 </p>
 
 > **The first [howware](https://howware.org).** A howware is your know-how, put to work by AI: you state the rules
 > in your own words and an agent follows them, with a few exact tools and a memory you own. No app to build, no
 > one to hand it off to, no waiting. This repository conforms to the
-> [howware specification 0.1](https://github.com/proteo5/howware/blob/main/docs/spec.md); its manifest is
+> [howware specification 0.1](https://github.com/howware/howware/blob/main/docs/spec.md); its manifest is
 > [`howware.json`](howware.json).
 
 A personal finance app is four things: **capture** of transactions, a **database**, **rules** (categories,
@@ -30,8 +30,8 @@ rest:
 
 | App piece | Here |
 |---|---|
-| Capture | [mxbank](https://github.com/proteo5/mx-bank-statement-reader): reads Mexican bank statement PDFs on your machine and outputs anonymized JSON |
-| Database | [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI): a local, append-only SQLite file with history |
+| Capture | [mxbank](https://github.com/howware/mx-bank-statement-reader): reads Mexican bank statement PDFs on your machine and outputs anonymized JSON |
+| Database | [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI): a local, append-only SQLite file with history |
 | Rules | **this repo**: the `finanzas-personales` skill and `fin.py` |
 | Screens | the conversation with Claude Code or Codex |
 
@@ -67,9 +67,9 @@ absolute barrier); what the agent does see leaves your computer for your AI prov
 memory file is not encrypted.
 
 **Open source so you can check it.** We don't ask for trust, we ask you to review it. All three pieces are
-Apache 2.0 and small on purpose: [finanzas-personales](https://github.com/proteo5/finanzas-personales),
-[mxbank](https://github.com/proteo5/mx-bank-statement-reader),
-[Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI). Found a privacy problem? Report
+Apache 2.0 and small on purpose: [finanzas-personales](https://github.com/howware/finanzas-personales),
+[mxbank](https://github.com/howware/mx-bank-statement-reader),
+[Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI). Found a privacy problem? Report
 it privately via [SECURITY.md](SECURITY.md).
 
 ## Features
@@ -88,11 +88,11 @@ it privately via [SECURITY.md](SECURITY.md).
 ## Install
 
 ```bash
-git clone https://github.com/proteo5/mx-bank-statement-reader
+git clone https://github.com/howware/mx-bank-statement-reader
 cd mx-bank-statement-reader && uv tool install . && cd ..
-git clone https://github.com/proteo5/long-term-memory-for-AI
+git clone https://github.com/howware/long-term-memory-for-AI
 python long-term-memory-for-AI/tools/install_skill.py --target ~/.claude/skills/project-memory
-git clone https://github.com/proteo5/finanzas-personales
+git clone https://github.com/howware/finanzas-personales
 python finanzas-personales/tools/install_skill.py
 ```
 

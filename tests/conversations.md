@@ -1,6 +1,6 @@
 # Escenarios de conversación
 
-Se revisan a mano antes de cada versión ([especificación howware §8](https://github.com/proteo5/howware/blob/main/docs/es/especificacion.md#8-pruebas)),
+Se revisan a mano antes de cada versión ([especificación howware §8](https://github.com/howware/howware/blob/main/docs/es/especificacion.md#8-pruebas)),
 con datos sintéticos (`tests/fixtures/`). Cada escenario: lo que dice el usuario, lo que el agente debe hacer y lo
 que no debe hacer.
 

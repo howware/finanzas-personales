@@ -7,7 +7,7 @@ personales** (por ejemplo, el agente lee un PDF, algo se publica sin permiso o u
 archivo versionado), repórtalo **de forma privada**:
 
 1. Ve a **Security → Report a vulnerability** del repositorio, o abre
-   https://github.com/proteo5/finanzas-personales/security/advisories/new.
+   https://github.com/howware/finanzas-personales/security/advisories/new.
 2. Describe el problema **sin incluir datos reales**: versiones (`python fin.py --version`,
    `mxbank version`, `memory.py --version`), el comando o la conversación que lo produjo con montos y nombres
    reemplazados, y qué se expuso (tipo de dato, nunca el valor).
@@ -16,8 +16,8 @@ archivo versionado), repórtalo **de forma privada**:
 reales en issues, pull requests o discusiones públicas.
 
 Si el problema está en la lectura del PDF o en la anonimización, repórtalo en
-[mxbank](https://github.com/proteo5/mx-bank-statement-reader/security/advisories/new); si está en el
-almacenamiento, en [Long-Term Memory for AI](https://github.com/proteo5/long-term-memory-for-AI).
+[mxbank](https://github.com/howware/mx-bank-statement-reader/security/advisories/new); si está en el
+almacenamiento, en [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI).
 
 ## Qué esperar
 
