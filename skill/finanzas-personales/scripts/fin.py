@@ -28,11 +28,13 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.2.2"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mxbank_records  # noqa: E402  (copia tal cual de mxbank: la forma común de un estado en la memoria)
+
+__version__ = "0.3.0"
 HERE = Path(__file__).resolve().parent
 SEED = HERE / "seed.json"
-MIN_SCHEMA = (1, 1)
-MIN_MEMORY = (0, 3, 0)
+MIN_MEMORY = (0, 4, 0)
 # categoría de un movimiento: la excepción más reciente, si hay; si no, la regla de su clasificador
 CATEGORY = "first(link-in:recategorizes/link:to_category | link:classified_by/fact:categorized_as)"
 # --as-of muy posterior: el último valor registrado aunque su vigencia empiece en el futuro
@@ -194,16 +196,10 @@ def read_statements(paths: list[str]) -> list[dict]:
 
 
 def check_statement(st: dict) -> None:
-    if not st.get("ok"):
-        raise FinError(f"mxbank reportó un error: {st.get('error')}")
-    version = tuple(int(x) for x in str(st.get("schema_version", "0.0")).split(".")[:2])
-    if version < MIN_SCHEMA or not st.get("statement_id"):
-        raise FinError("Se necesita mxbank con schema 1.1 o más reciente (ids estables). Actualiza mxbank.")
-    if st["privacy"].get("pseudonym_scope") != "key":
-        raise FinError("El JSON se generó sin --pseudonym-key-env: sus ids cambian en cada ejecución y "
-                       "duplicarían movimientos. Vuelve a extraer con la misma llave de siempre.")
-    if not st["account"].get("account_ref"):
-        raise FinError("El estado no trae account_ref: no se puede saber a qué cuenta pertenece.")
+    try:
+        mxbank_records.check_statement(st)
+    except mxbank_records.RecordsError as error:
+        raise FinError(str(error)) from error
 
 
 def classifier(tx: dict, seed: dict) -> tuple[str, dict | None]:
@@ -224,55 +220,29 @@ def classifier(tx: dict, seed: dict) -> tuple[str, dict | None]:
 
 
 def statement_document(st: dict, by: str, tz: str, seed: dict) -> tuple[dict, dict]:
-    doc_, acct, period = st["document"], st["account"], st["period"]
+    """Registros comunes del estado (mxbank_records) más la lectura de finanzas: clasificador y pago pendiente."""
+    write, base = mxbank_records.memory_document(st, by, tz)
     credit = st.get("credit") or {}
-    account_key = f"account:{acct['account_ref']}"
-    product = doc_["product"]
-    label = doc_.get("product_name") or f"{doc_['bank_name']} {product}"
-    name = f"{label} ({acct['account_last4']})" if acct.get("account_last4") else label
-    end_instant = at(period.get("end"), tz)
-    entities = {account_key: {"key": account_key, "type": "account", "name": name}}
-    facts = [{"subject": account_key, "predicate": "account_product", "value": product},
-             {"subject": account_key, "predicate": "bank_code", "value": doc_["bank"]}]
-    if product == "credit":
-        if credit.get("total_balance") is not None and end_instant:
-            facts.append({"subject": account_key, "predicate": "balance", "value": -cents(credit["total_balance"]),
-                          "valid_from": end_instant})
-        if credit.get("credit_limit") is not None and end_instant:
-            facts.append({"subject": account_key, "predicate": "credit_limit", "value": cents(credit["credit_limit"]),
-                          "valid_from": end_instant})
-    elif (st.get("summary") or {}).get("closing_balance") is not None and end_instant:
-        facts.append({"subject": account_key, "predicate": "balance", "value": cents(st["summary"]["closing_balance"]),
-                      "valid_from": end_instant})
-
-    attrs: dict[str, Any] = {"period_start": at(period.get("start"), tz), "period_end": end_instant,
-                             "reconciled": st["validation"].get("reconciled")}
-    summary = st.get("summary") or {}
-    for k in ("opening_balance", "closing_balance"):
-        attrs[k] = cents(summary.get(k))
-    for k in ("no_interest_payment", "minimum_payment", "interest_charged", "fees_charged",
-              "vat_on_interest_and_fees", "total_balance"):
-        attrs[k] = cents(credit.get(k))
-    attrs["payment_due_date"] = at(credit.get("payment_due_date"), tz)
-    attrs = {k: v for k, v in attrs.items() if v is not None}
-    sid = st["statement_id"]
-    events = [{"key": sid, "type": "statement_imported", "occurred_at": end_instant or "now",
-               "summary": f"{name} statement {period.get('start')}..{period.get('end')}",
-               "attributes": attrs, "links": [{"predicate": "on_account", "entity": account_key}]}]
+    account_key, name, product, sid = base["account"], base["account_name"], base["product"], base["statement_id"]
+    end_instant = mxbank_records.at(st["period"].get("end"), tz)
+    entities = {e["key"]: e for e in write["entities"]}
+    by_key = {e["key"]: e for e in write["events"]}
 
     no_interest = cents(credit.get("no_interest_payment"))
     due = None
     if product == "credit" and no_interest and no_interest > 0 and credit.get("payment_due_date"):
         due = {"key": f"DUE_{sid}", "due_date": credit["payment_due_date"], "no_interest": no_interest}
-        events.append({"key": due["key"], "type": "payment_due", "occurred_at": end_instant,
-                       "summary": f"Pay {money(no_interest)} on {name} by {credit['payment_due_date']}",
-                       "attributes": {"payment_due_date": attrs["payment_due_date"], "no_interest_payment": no_interest,
-                                      **({"minimum_payment": attrs["minimum_payment"]} if "minimum_payment" in attrs else {}),
-                                      "requested_action": f"Pay {money(no_interest)} (no-interest payment) on {name} "
-                                                          f"by {credit['payment_due_date']}"},
-                       "pending_for": by,
-                       "links": [{"predicate": "on_account", "entity": account_key},
-                                 {"predicate": "for_statement", "event": sid}]})
+        stattrs = by_key[sid]["attributes"]
+        write["events"].insert(1, {
+            "key": due["key"], "type": "payment_due", "occurred_at": end_instant,
+            "summary": f"Pay {money(no_interest)} on {name} by {credit['payment_due_date']}",
+            "attributes": {"payment_due_date": stattrs["payment_due_date"], "no_interest_payment": no_interest,
+                           **({"minimum_payment": stattrs["minimum_payment"]} if "minimum_payment" in stattrs else {}),
+                           "requested_action": f"Pay {money(no_interest)} (no-interest payment) on {name} "
+                                               f"by {credit['payment_due_date']}"},
+            "pending_for": by,
+            "links": [{"predicate": "on_account", "entity": account_key},
+                      {"predicate": "for_statement", "event": sid}]})
 
     touched: dict[str, dict] = {}
     for tx in st["transactions"]:
@@ -284,35 +254,12 @@ def statement_document(st: dict, by: str, tz: str, seed: dict) -> tuple[dict, di
                                       "transactions": 0, "amount_cents": 0})
         t["transactions"] += 1
         t["amount_cents"] += amount
-        tattrs = {"amount": amount, "tx_type": tx["type"], "bank_description": tx.get("description"),
-                  "entry_source": "statement", "original_currency": tx.get("original_currency"),
-                  "original_amount_text": tx.get("original_amount"), "exchange_rate_text": tx.get("exchange_rate"),
-                  "installment_number": tx.get("installment_number"), "installments_total": tx.get("installments_total")}
-        events.append({"key": tx["id"], "type": "transaction", "occurred_at": at(tx["date"], tz),
-                       "summary": (tx.get("description") or tx["type"])[:160],
-                       "attributes": {k: v for k, v in tattrs.items() if v is not None},
-                       "links": [{"predicate": "on_account", "entity": account_key},
-                                 {"predicate": "classified_by", "entity": ckey},
-                                 {"predicate": "imported_from", "event": sid}]})
+        by_key[tx["id"]]["links"].insert(1, {"predicate": "classified_by", "entity": ckey})
 
-    for plan in st.get("installment_plans") or []:
-        pkey = f"plan:{plan['id']}"
-        entities[pkey] = {"key": pkey, "type": "installment_plan", "name": plan["description"]}
-        facts.append({"subject": pkey, "predicate": "on_account", "value": account_key})
-        for pred, value in (("plan_original_amount", cents(plan.get("original_amount"))),
-                            ("installments_total", plan.get("installments_total"))):
-            if value is not None:
-                facts.append({"subject": pkey, "predicate": pred, "value": value})
-        for pred, value in (("pending_balance", cents(plan.get("pending_balance"))),
-                            ("installments_paid", plan.get("installment_number"))):
-            if value is not None and end_instant:
-                facts.append({"subject": pkey, "predicate": pred, "value": value, "valid_from": end_instant})
-
-    write = {"source": source(by, f"mxbank statement {sid} ({doc_['bank']} {product} {period.get('start')}..{period.get('end')})"),
-             "performed_by": by, "entities": list(entities.values()), "facts": facts, "events": events}
+    write["entities"] = list(entities.values())
     info = {"statement_id": sid, "account": account_key, "account_name": name, "product": product,
-            "period": [period.get("start"), period.get("end")], "reconciled": st["validation"].get("reconciled"),
-            "warnings": st["validation"].get("warnings", []), "due": due, "touched": touched,
+            "period": base["period"], "reconciled": base["reconciled"], "warnings": base["warnings"], "due": due,
+            "touched": touched,
             "payments": [(tx["date"], cents(tx["amount"])) for tx in st["transactions"] if tx["type"] == "card_payment"]}
     return write, info
 
@@ -351,29 +298,17 @@ def payments_of(mem: Mem, sid: str) -> list[tuple[str, int]]:
     return [(str(r["occurred_at"])[:10], r["attr:amount"]) for r in rows]
 
 
-TEMPORAL = {"balance", "credit_limit", "pending_balance", "installments_paid"}
-
-
-def drop_older_facts(mem: Mem, facts: list[dict]) -> tuple[list[dict], int]:
+def drop_older_facts(mem: Mem, doc: dict) -> int:
     """Un estado viejo importado después de uno nuevo no reemplaza saldos vigentes (ya quedan en el evento)."""
-    keep, skipped, current = [], 0, {}
-    for subject in {f["subject"] for f in facts if f["predicate"] in TEMPORAL}:
+    current = {}
+    for subject in mxbank_records.temporal_subjects(doc):
         etype = "account" if subject.startswith("account:") else "installment_plan"
-        cols = [x for pred in sorted(TEMPORAL) for x in ("--column", f"fact:{pred}/since")]
+        cols = [x for pred in sorted(mxbank_records.TEMPORAL) for x in ("--column", f"fact:{pred}/since")]
         rows = mem.rows("--entity-type", etype, "--where", f"key = {subject}", "--as-of", LATEST, *cols)
-        if rows:
-            current[subject] = rows[0]
-    for f in facts:
-        since = current.get(f["subject"], {}).get(f"fact:{f['predicate']}/since") if f["predicate"] in TEMPORAL else None
-        if since and f.get("valid_from") and parse_instant(f["valid_from"]) <= parse_instant(str(since)):
-            skipped += 1
-            continue
-        keep.append(f)
-    return keep, skipped
-
-
-def parse_instant(text: str) -> datetime:
-    return datetime.fromisoformat(text.replace("Z", "+00:00"))
+        for pred in mxbank_records.TEMPORAL:
+            if rows and rows[0].get(f"fact:{pred}/since"):
+                current[(subject, pred)] = rows[0][f"fact:{pred}/since"]
+    return mxbank_records.keep_newer(doc, current)
 
 
 def quiet(warnings: list[str]) -> list[str]:
@@ -397,7 +332,7 @@ def cmd_import(mem: Mem, args) -> dict:
         if args.dry_run:
             report.append({"statement_id": info["statement_id"], "events": len(doc["events"]), "dry_run": True})
             continue
-        doc["facts"], skipped = drop_older_facts(mem, doc["facts"])
+        skipped = drop_older_facts(mem, doc)
         result = mem.write(doc)
         ev = result.get("events", {})
         entry = {"statement_id": info["statement_id"], "account": info["account_name"],

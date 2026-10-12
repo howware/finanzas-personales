@@ -75,6 +75,20 @@ class FinTest(unittest.TestCase):
         count = self.mem(["aggregate", "--event-type", "transaction"])["groups"][0]["value"]
         self.assertEqual(count, 16)
 
+    def test_statement_imported_first_by_another_howware(self):
+        """Memoria compartida: otro howware guardó el estado con los registros comunes; finanzas agrega su lectura."""
+        st = fin.read_statements([self.fixture("bbva_debit")])[0]
+        doc, _ = fin.mxbank_records.memory_document(st, BY, "-06:00")
+        subprocess.run([sys.executable, str(HELPER), "--db", self.db, "write"], input=json.dumps(doc),
+                       capture_output=True, text=True, encoding="utf-8", check=True)
+        result = self.fin("import", self.fixture("bbva_debit"), "--by", BY)
+        self.assertEqual(result["statements"][0]["transactions_new"], 0)
+        unclassified = self.mem(["list", "--event-type", "transaction", "--where", "no:link:classified_by",
+                                 "--column", "key"])["rows"]
+        self.assertEqual(unclassified, [])
+        count = self.mem(["aggregate", "--event-type", "transaction"])["groups"][0]["value"]
+        self.assertEqual(count, len(st["transactions"]))
+
     def test_payment_due_settled_in_any_order(self):
         newer = self.fin("import", self.fixture("credit_m1"), "--by", BY)
         self.assertEqual(len(newer["pending"]), 1)
@@ -181,6 +195,18 @@ class FinTest(unittest.TestCase):
 
 
 class UnitTest(unittest.TestCase):
+    def test_records_module_is_mxbanks_copy(self):
+        """mxbank_records.py se copia tal cual de mxbank; si el repositorio hermano está, deben ser iguales."""
+        found = [p / "src" / "mxbank" / "records.py" for p in (ROOT.parent / "mx-bank-statement-reader",
+                                                              ROOT / "mx-bank-statement-reader")]
+        original = next((p for p in found if p.is_file()), None)
+        if not original:
+            self.skipTest("No está el repositorio de mxbank (../mx-bank-statement-reader)")
+        copy_ = FIN.parent / "mxbank_records.py"
+        self.assertEqual(copy_.read_text(encoding="utf-8").splitlines(),
+                         original.read_text(encoding="utf-8").splitlines(),
+                         "Copia de nuevo src/mxbank/records.py de mxbank a mxbank_records.py")
+
     def test_merchant_name(self):
         self.assertEqual(fin.merchant_name("OXXO", "OXXO CENTRO MTY"), "OXXO")
         self.assertEqual(fin.merchant_name(None, "TACOS [DATO]"), "TACOS")

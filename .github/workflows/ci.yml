@@ -22,6 +22,12 @@ jobs:
           repository: howware/long-term-memory-for-AI
           path: long-term-memory-for-AI
 
+      - name: Adaptador mxbank (solo para comparar la copia de sus registros comunes)
+        uses: actions/checkout@v4
+        with:
+          repository: howware/mx-bank-statement-reader
+          path: mx-bank-statement-reader
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}

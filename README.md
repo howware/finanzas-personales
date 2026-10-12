@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/versión-0.2.2-blue" alt="Versión 0.2.2">
+  <img src="https://img.shields.io/badge/versión-0.3.0-blue" alt="Versión 0.3.0">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.2-5a45d6" alt="howware 0.2"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/licencia-Apache%202.0-green" alt="Licencia Apache 2.0">
@@ -288,7 +288,7 @@ El agente lo usa por ti; esta tabla es para auditar o automatizar. Toda salida e
 
 Errores: `{"ok": false, "error": {"code": …, "message": …}}` con código de salida **2** (entrada inválida) o
 **3** (problema con la memoria). Montos en la memoria: enteros en centavos (`MXN_cent`). Requiere mxbank ≥ 0.2.0 y Long-Term Memory for AI
-≥ 0.3.0; `fin.py` verifica la versión de la memoria.
+≥ 0.4.0; `fin.py` verifica la versión de la memoria.
 
 ## Limitaciones
 

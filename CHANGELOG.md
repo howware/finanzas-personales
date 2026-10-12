@@ -2,6 +2,15 @@
 
 Todos los cambios relevantes. Las versiones siguen [Semantic Versioning](https://semver.org/lang/es/).
 
+## 0.3.0
+
+- **Memoria compartida con otros howwares** (especificación howware 0.2 §8). Los estados de cuenta se guardan con
+  los registros comunes de mxbank (`mxbank_records.py`, copia tal cual de `src/mxbank/records.py` de mxbank 0.3.0),
+  y la lectura de finanzas (clasificador y pago pendiente de la tarjeta) se agrega aparte. Si otro howware, como
+  facturación o arrendamiento, ya importó el estado, finanzas no duplica nada y solo agrega su clasificación.
+  Los registros son idénticos a los de 0.2.2: las memorias existentes no cambian.
+- Requiere project-memory 0.4.0 (un movimiento ya guardado recibe los vínculos que le falten).
+
 ## 0.2.2
 
 - Cumple la [especificación howware 0.2](https://github.com/howware/howware/blob/main/docs/es/especificacion.md):

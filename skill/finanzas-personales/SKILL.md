@@ -6,7 +6,7 @@ description: Lleva las finanzas personales del usuario sin app, sobre la memoria
 # Finanzas personales sin app
 
 Un [howware](https://howware.org): el saber hacer de las finanzas personales, puesto a trabajar por ti. Tres
-piezas, cada una con su responsabilidad. Requiere `project-memory` 0.3.0 o más reciente y `mxbank` 0.2.0 o más
+piezas, cada una con su responsabilidad. Requiere `project-memory` 0.4.0 o más reciente y `mxbank` 0.2.0 o más
 reciente; `fin.py` lo verifica.
 
 | Pieza | Hace | Nunca |
