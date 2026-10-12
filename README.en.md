@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/version-0.3.0-blue" alt="Version 0.3.0">
+  <img src="https://img.shields.io/badge/version-0.4.0-blue" alt="Version 0.4.0">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.2-5a45d6" alt="howware 0.2"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="Apache 2.0 license">
@@ -54,6 +54,7 @@ you is removed right there, and the agent works with what is left: transactions 
 | Your name, address, RFC and CURP | Categories, budgets and totals |
 | Card and account numbers, CLABE | Pseudonyms instead of accounts (`ACC_92d5`) and people (`PERSONA_7f3a`) |
 | Names and accounts of the people you pay | Product name and last 4 digits of the account (can be omitted) |
+| Mortgage and loan statements, credit and contract numbers | With the compromisos module: each credit's name as you call it, lender, rate, payment, balance, expected income and cushion |
 | The memory file (the agent queries it and sees the answers) | What you type in the conversation |
 
 **How it is built:** the skill forbids the agent from opening the PDF and only mxbank reads it; mxbank's output
@@ -64,8 +65,9 @@ links each measure to the code that implements it.
 
 **What we cannot guarantee:** automatic anonymization is not infallible; the no-PDF rule is an instruction to
 the agent (in Claude Code you can back it with a `Read(**/*.pdf)` deny permission, which still is not an
-absolute barrier); what the agent does see leaves your computer for your AI provider, under its terms; and the
-memory file is not encrypted.
+absolute barrier); what the agent does see leaves your computer for your AI provider, under its terms; the
+memory file is not encrypted; and the compromisos forecasts and payoff dates are estimates (the lender's figures
+are the official ones), not financial advice.
 
 **Open source so you can check it.** We don't ask for trust, we ask you to review it. All three pieces are
 Apache 2.0 and small on purpose: [finanzas-personales](https://github.com/howware/finanzas-personales),
@@ -84,6 +86,12 @@ it privately via [SECURITY.md](SECURITY.md).
 - **Card payments**: every session starts with the no-interest payment and due date; it closes itself when
   the next statement shows the payment.
 - **Instant reports**: spending by category, month over month, active installment plans, interest and fees.
+- **Optional compromisos module: look ahead.** Like a hotel's revenue management: budget, actual and forecast
+  for the week, month, quarter, half-year and year. Your credits and mortgages, what installment plans already
+  commit, your expected income (also in dollars) and a cushion that comes first. A payoff plan (avalanche or
+  snowball) that **adjusts instead of breaking**: if one month you can only pay the minimum, it recalculates and
+  shows how to catch up. It also flags **cascades**: a mortgage paid with a credit card moves to the card's rate
+  if the card is not paid in full. Off until you ask for it.
 - **Nothing is erased**: changes close or void records, with author, date and reason.
 
 ## Install

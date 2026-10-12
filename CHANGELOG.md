@@ -2,6 +2,22 @@
 
 Todos los cambios relevantes. Las versiones siguen [Semantic Versioning](https://semver.org/lang/es/).
 
+## 0.4.0
+
+- **Módulo opcional compromisos** ([docs/03-compromisos.md](docs/03-compromisos.md)): ver hacia adelante, como el
+  *revenue management* de un hotel. Se activa solo si la persona lo pide; apagado, nada cambia.
+  - Créditos e hipotecas con tasa (amortización al centavo, abonos a capital) o sin tasa (calendario de pagos),
+    con el saldo real del acreedor como ancla.
+  - Pagos de los créditos: los cargos importados se ligan con una regla aprobada, cada mes queda un pago pendiente
+    que el arranque recuerda, y un pago tardío vuelve a cerrar el periodo.
+  - Pronóstico semanal, mensual, trimestral, semestral y anual: presupuesto, real y pronóstico; ritmo de gasto por
+    día; ingreso esperado con tipo de cambio y sensibilidad; compras a meses que se liberan; colchón.
+  - Plan de liquidación: avalancha y bola de nieve contra solo el mínimo; cada versión aprobada queda guardada y la
+    revisión del mes la recalcula con lo que de verdad se pagó ("el plan se reajusta, no se rompe").
+  - Cascadas: compromisos pagados con tarjeta de crédito y el riesgo si la tarjeta no se cubre completa.
+- Nueva herramienta `compromisos.py` (solo biblioteca estándar, sin red) y protocolo `compromisos.md`.
+- Semilla 3: predicados del módulo (se declaran al activarlo; `setup` no cambia).
+
 ## 0.3.0
 
 - **Memoria compartida con otros howwares** (especificación howware 0.2 §8). Los estados de cuenta se guardan con

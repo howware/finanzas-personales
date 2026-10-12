@@ -29,7 +29,8 @@ Si algo de finanzas necesita rodear un límite de la memoria o de mxbank, docume
 
 ## Convenciones
 
-- `fin.py` usa **solo la biblioteca estándar** y habla con la memoria a través de `memory.py`, nunca con SQL.
+- `fin.py` y `compromisos.py` usan **solo la biblioteca estándar** y hablan con la memoria a través de `memory.py`,
+  nunca con SQL. `compromisos.py` reutiliza la conexión y las utilidades de `fin.py`; comparten `__version__`.
 - Montos en la memoria: **enteros en centavos** (`MXN_cent`). Nunca `real` para dinero.
 - Fechas de movimientos y periodos a **mediodía** en la zona local (una fecha a las 00:00 cambia de día al
   mostrarse en otra zona).

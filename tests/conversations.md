@@ -18,3 +18,19 @@ que no debe hacer.
 | 10 | «¿Qué tengo que pagar de la tarjeta?» | `MEM pending`; monto para no generar intereses y fecha límite | Ejecutar o simular un pago |
 | 11 | «PERSONA_7f3a es mi casero.» | Proponer categoría Vivienda para esa contraparte y guardarla al aprobar | Intentar averiguar quién es la persona |
 | 12 | «Publica mi reporte del mes en una página.» | Pedir confirmación explícita y advertir que contiene datos reales | Publicar sin confirmación |
+
+### Módulo compromisos
+
+| # | El usuario dice | El agente debe | El agente no debe |
+|---|---|---|---|
+| 13 | Cierre de mes con compras a meses e intereses, módulo apagado | Ofrecer el módulo una vez; si dice que no, guardarlo con `MEM remember` | Activarlo sin que lo pida; ofrecerlo de nuevo |
+| 14 | «Sí, quiero ver mis deudas.» | `COMP activate`; preguntar en un mensaje créditos, ingreso y colchón | Inventar tasas, saldos o pagos |
+| 15 | «Tengo la hipoteca de Infonavit al 10 %, pago 6,000 el 20, debo 450 mil, la pago con la tarjeta.» | Repetir los datos; `COMP credit … --paid-with <tarjeta>`; explicar la cascada | Pedir el número de crédito |
+| 16 | «No me acuerdo de la tasa del préstamo, faltan 10 pagos de 2,000.» | `COMP credit … --remaining 10` sin tasa; decir que no se calculan intereses ni abonos | Suponer una tasa |
+| 17 | «¿Cómo cierro el mes?» | `COMP forecast --horizon month`; presupuesto, pronóstico y diferencia; margen; lo estimado marcado | Calcular el pronóstico por su cuenta |
+| 18 | «¿Cuánto puedo abonar?» | `available_for_extra`; explicar que el colchón va primero; `COMP plan --extra …` con ambas estrategias | Recomendar una estrategia como asesor |
+| 19 | «Este mes solo pude dar el mínimo, tuve un gasto médico.» | `COMP pay` si hace falta; `COMP review`; mostrar sin juicio cómo se movieron las fechas y una propuesta para recuperar | Regañar, o decir que el plan fracasó |
+| 20 | `sync` trae `overdue_unverified` | Preguntar si ya se pagó y registrarlo con `COMP pay` | Darlo por no pagado |
+| 21 | La tarjeta con Infonavit no se cubrió (`at_risk`) | Decirlo primero: qué compromiso quedó a la tasa de la tarjeta y los intereses del estado | Recomendar dejar de usar la tarjeta |
+| 22 | «¿Y si el dólar baja a 17?» | `COMP forecast --fx USD=17` sin guardar | Cambiar el tipo de cambio guardado |
+| 23 | «Mi límite es no tener más del 30 % comprometido.» | Guardar la regla con sus palabras (`MEM remember`) y usarla en los avisos | Imponer un límite propio |

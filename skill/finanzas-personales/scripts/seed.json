@@ -1,5 +1,5 @@
 {
-  "seed_version": "2",
+  "seed_version": "3",
   "predicates": [
     {
       "id": "amount",
@@ -675,5 +675,250 @@
         }
       }
     }
-  ]
+  ],
+  "compromisos": {
+    "predicates": [
+      {
+        "id": "module_active",
+        "value_type": "boolean",
+        "cardinality": "one",
+        "label": "Module active",
+        "description": "An optional module of this howware is turned on"
+      },
+      {
+        "id": "credit_kind",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Credit kind",
+        "description": "mortgage, auto, personal or other"
+      },
+      {
+        "id": "lender",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Lender",
+        "description": "Who lent the money, as the person names it (BBVA, Infonavit)"
+      },
+      {
+        "id": "annual_rate_bp",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Annual rate",
+        "description": "Annual interest rate in basis points (1200 = 12.00 %)",
+        "unit": "basis_point"
+      },
+      {
+        "id": "scheduled_payment",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Scheduled payment",
+        "description": "Monthly payment the lender requires, in cents, including insurance and fees",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "included_charges",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Included charges",
+        "description": "Insurance and fees inside the scheduled payment, in cents",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "payment_day",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Payment day",
+        "description": "Day of the month the payment is due"
+      },
+      {
+        "id": "remaining_payments",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Remaining payments",
+        "description": "Payments left on a credit without a known rate"
+      },
+      {
+        "id": "principal_balance",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Principal balance",
+        "description": "Outstanding principal the lender reports at a date, in cents",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "paid_with",
+        "value_type": "entity",
+        "cardinality": "one",
+        "label": "Paid with",
+        "description": "Account a credit's payments are charged to"
+      },
+      {
+        "id": "prepayment_allowed",
+        "value_type": "boolean",
+        "cardinality": "one",
+        "label": "Prepayment allowed",
+        "description": "The lender accepts extra principal payments without penalty"
+      },
+      {
+        "id": "tracking_since",
+        "value_type": "datetime",
+        "cardinality": "one",
+        "label": "Tracking since",
+        "description": "Date from which the credit's payments are followed"
+      },
+      {
+        "id": "pays_credit",
+        "value_type": "entity",
+        "cardinality": "one",
+        "label": "Pays credit",
+        "description": "Rule: charges of this merchant, counterparty or kind are payments of a credit"
+      },
+      {
+        "id": "for_credit",
+        "value_type": "entity",
+        "cardinality": "one",
+        "label": "For credit",
+        "description": "Credit a payment, due or settlement belongs to"
+      },
+      {
+        "id": "from_transaction",
+        "value_type": "any",
+        "cardinality": "one",
+        "label": "From transaction",
+        "description": "Imported transaction a credit payment comes from"
+      },
+      {
+        "id": "credit_payment_amount",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Credit payment amount",
+        "description": "Amount paid to a credit, in cents (positive)",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "extra_payment",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Extra payment",
+        "description": "Paid above the scheduled payment in a due period, in cents",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "arrears_paid",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Arrears paid",
+        "description": "Part of a period's payments that covered earlier shortfalls, in cents",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "strategy",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Strategy",
+        "description": "Debt payoff strategy: avalanche or snowball"
+      },
+      {
+        "id": "extra_monthly",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Extra monthly",
+        "description": "Planned extra payment per month, in cents",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "plan_detail_text",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Plan detail",
+        "description": "Payoff months and first 24 months of a saved plan, as JSON text"
+      },
+      {
+        "id": "covers_credit",
+        "value_type": "entity",
+        "cardinality": "many",
+        "label": "Covers credit",
+        "description": "Credits a debt plan includes"
+      },
+      {
+        "id": "income_amount",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Income amount",
+        "description": "Expected income per period in cents of its currency",
+        "unit": "currency_cent"
+      },
+      {
+        "id": "income_currency",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Income currency",
+        "description": "ISO currency of an income source (MXN, USD)"
+      },
+      {
+        "id": "income_frequency",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Income frequency",
+        "description": "monthly, biweekly or weekly"
+      },
+      {
+        "id": "income_mode",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Income mode",
+        "description": "expected (a fixed amount) or average (of past income)"
+      },
+      {
+        "id": "average_months",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Average months",
+        "description": "Months averaged for an income source in average mode"
+      },
+      {
+        "id": "fx_rate_text",
+        "value_type": "text",
+        "cardinality": "one",
+        "label": "Reference exchange rate",
+        "description": "Pesos per unit of a currency chosen by the person, decimal text"
+      },
+      {
+        "id": "cushion_target",
+        "value_type": "integer",
+        "cardinality": "one",
+        "label": "Cushion target",
+        "description": "Emergency cushion the person wants to keep, in cents",
+        "unit": "MXN_cent"
+      },
+      {
+        "id": "held_in",
+        "value_type": "entity",
+        "cardinality": "many",
+        "label": "Held in",
+        "description": "Accounts where the cushion is kept"
+      }
+    ],
+    "allowed_values": {
+      "credit_kind": [
+        "mortgage",
+        "auto",
+        "personal",
+        "other"
+      ],
+      "income_frequency": [
+        "monthly",
+        "biweekly",
+        "weekly"
+      ],
+      "income_mode": [
+        "expected",
+        "average"
+      ],
+      "strategy": [
+        "avalanche",
+        "snowball"
+      ]
+    }
+  }
 }

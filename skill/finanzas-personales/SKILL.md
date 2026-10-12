@@ -1,6 +1,6 @@
 ---
 name: finanzas-personales
-description: Lleva las finanzas personales del usuario sin app, sobre la memoria persistente (project-memory) y estados de cuenta leídos con mxbank. Úsalo cuando el usuario quiera importar estados de cuenta a su historial, categorizar gastos, registrar un gasto en efectivo, fijar o revisar presupuestos, saber cuánto gastó o ganó por categoría o mes, qué pagos de tarjeta tiene pendientes, o hacer el cierre de mes.
+description: Lleva las finanzas personales del usuario sin app, sobre la memoria persistente (project-memory) y estados de cuenta leídos con mxbank. Úsalo cuando el usuario quiera importar estados de cuenta a su historial, categorizar gastos, registrar un gasto en efectivo, fijar o revisar presupuestos, saber cuánto gastó o ganó por categoría o mes, qué pagos de tarjeta tiene pendientes, o hacer el cierre de mes. Con el módulo opcional compromisos, también sus créditos e hipotecas, cuánto tiene comprometido, cómo va a cerrar la semana, el mes o el año, y un plan para liquidar deudas que se ajusta sobre la marcha.
 ---
 
 # Finanzas personales sin app
@@ -14,6 +14,7 @@ reciente; `fin.py` lo verifica.
 | `mxbank` (skill `mxbank`) | Lee el PDF localmente y entrega JSON anonimizado con ids estables | — |
 | `fin.py` (este skill, `scripts/fin.py`) | Importa ese JSON a la memoria, guarda reglas, captura efectivo, arma reportes | Leer PDFs |
 | Memoria (skill `project-memory`) | Guarda todo, sin borrar, con historia | — |
+| `compromisos.py` (módulo opcional, `scripts/compromisos.py`) | Créditos, pronóstico, plan de liquidación y cascadas | Leer estados de créditos |
 
 `FIN` = `python "<carpeta de este skill>/scripts/fin.py"`; `MEM` = el helper del skill `project-memory`.
 Ejecuta ambos desde la carpeta de finanzas del usuario (donde está `.memory/`). Toda salida es JSON.
@@ -82,6 +83,8 @@ mis-finanzas/            ← el usuario la elige; es un repo git o una carpeta n
    y después `FIN setup --by person:<id>`. `setup` carga 12 categorías principales, reglas por tipo de
    movimiento, recetas y declara `transaction` como tipo de alto volumen. Se puede repetir sin duplicar.
 3. Si hay pagos pendientes (`payment_due`) con fecha próxima o vencida, menciónalos primero.
+4. Si el módulo compromisos está activo (`module:compromisos`, ver [Módulo compromisos](#9-módulo-compromisos-opcional)),
+   lee [compromisos.md](compromisos.md) y sigue también sus reglas.
 
 ## 2. Importar estados de cuenta
 
@@ -198,7 +201,19 @@ subcategoría o en una principal; en el reporte por categoría principal se suma
 4. `FIN report --month <mes>` y comparación con el mes anterior.
 5. Señalar lo accionable: categorías sobre presupuesto, intereses o comisiones pagados, suscripciones nuevas
    o con aumento de precio, pagos de tarjeta no cubiertos.
-6. `MEM backup`.
+6. Con el módulo compromisos activo: su paso de cierre ([compromisos.md](compromisos.md#al-cierre-de-mes-sección-8-de-skillmd)).
+7. `MEM backup`.
+
+## 9. Módulo compromisos (opcional)
+
+Ver hacia adelante: créditos e hipotecas, compras a meses, ingreso esperado y colchón, pronóstico por semana,
+mes, trimestre, semestre y año, un plan de liquidación (avalancha o bola de nieve) que se reajusta con lo que de
+verdad se pagó, y las cascadas (compromisos pagados con tarjeta). Está apagado hasta que la persona lo pida;
+apagado, nada de este skill cambia.
+
+- Si la persona pide algo de eso, o lo acepta cuando se le ofrece, lee [compromisos.md](compromisos.md) y sigue
+  su sección 1.
+- `COMP` = `python "<carpeta de este skill>/scripts/compromisos.py"`.
 
 ## Presentar resultados
 

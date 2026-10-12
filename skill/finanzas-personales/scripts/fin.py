@@ -31,7 +31,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import mxbank_records  # noqa: E402  (copia tal cual de mxbank: la forma común de un estado en la memoria)
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 HERE = Path(__file__).resolve().parent
 SEED = HERE / "seed.json"
 MIN_MEMORY = (0, 4, 0)

@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml"><img src="https://github.com/howware/finanzas-personales/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/versión-0.3.0-blue" alt="Versión 0.3.0">
+  <img src="https://img.shields.io/badge/versión-0.4.0-blue" alt="Versión 0.4.0">
   <a href="https://howware.org"><img src="https://img.shields.io/badge/howware-0.2-5a45d6" alt="howware 0.2"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/licencia-Apache%202.0-green" alt="Licencia Apache 2.0">
@@ -78,6 +78,7 @@ flowchart LR
 | Números de tarjeta, de cuenta y CLABE | Seudónimos en lugar de cuentas (`ACC_92d5`) y personas (`PERSONA_7f3a`) |
 | Nombres y cuentas de las personas a las que transfieres | El nombre del producto y los últimos 4 dígitos de la cuenta (se omiten con `--privacy strict`) |
 | Claves de rastreo, referencias y conceptos de transferencias | Lo que tú escribes en la conversación |
+| Estados de tus créditos e hipotecas, y números de crédito o de contrato | Con el módulo compromisos: el nombre que le pones a cada crédito, acreedor, tasa, pago, saldo, ingreso esperado y colchón |
 | El archivo de la memoria (el agente le hace consultas y ve las respuestas) | |
 
 ### Cómo está construido
@@ -105,12 +106,14 @@ flowchart LR
   a tu proveedor de IA y quedan sujetos a sus términos. No te identifican por sí solos, pero son información
   sobre tus hábitos de gasto.
 - **La memoria no está cifrada.** Protégela como cualquier archivo personal (cifrado de disco, respaldos).
+- **Los pronósticos son estimaciones.** Saldos y fechas de término del módulo compromisos se calculan con tasa
+  anual / 12 y pueden diferir de los del acreedor; los oficiales son los suyos. No es asesoría financiera.
 
 ### Código abierto para que lo revises
 
 No te pedimos confianza: te pedimos que lo revises. Las tres piezas son **código abierto bajo Apache 2.0** y
-son pequeñas a propósito. `fin.py` son unas 600 líneas de Python sin dependencias, y el protocolo del agente es
-un archivo de texto que puedes leer en cinco minutos.
+son pequeñas a propósito. `fin.py` son unas 600 líneas de Python sin dependencias (el módulo opcional
+`compromisos.py`, unas 900), y el protocolo del agente es un archivo de texto que puedes leer en cinco minutos.
 
 - [finanzas-personales](https://github.com/howware/finanzas-personales) · [mxbank](https://github.com/howware/mx-bank-statement-reader) · [Long-Term Memory for AI](https://github.com/howware/long-term-memory-for-AI)
 - Si encuentras una forma en que un dato personal llegue a la IA, o cualquier otro problema de privacidad,
@@ -130,6 +133,7 @@ un archivo de texto que puedes leer en cinco minutos.
 - [Categorías](#categorías)
 - [Privacidad](#privacidad)
 - [Referencia de fin.py](#referencia-de-finpy)
+- [Referencia de compromisos.py](#referencia-de-compromisospy-módulo-opcional)
 - [Limitaciones](#limitaciones)
 - [Desarrollo](#desarrollo)
 - [Documentación](#documentación)
@@ -153,6 +157,12 @@ un archivo de texto que puedes leer en cinco minutos.
   el pendiente se cierra solo cuando el siguiente estado trae el pago.
 - **Reportes al momento.** Gasto por categoría, mes contra mes, meses sin intereses vigentes, intereses y
   comisiones pagados, cargos sin categoría.
+- **Módulo opcional compromisos: ver hacia adelante.** Como el *revenue management* de un hotel: presupuesto,
+  real y pronóstico por semana, mes, trimestre, semestre y año. Tus créditos e hipotecas, lo que ya tienes
+  comprometido en compras a meses, tu ingreso esperado (también en dólares) y un colchón que va primero. Un plan
+  para liquidar créditos (avalancha o bola de nieve) que **se reajusta, no se rompe**: si un mes solo das el
+  mínimo, recalcula y te muestra cómo recuperar. Y te avisa de las **cascadas**: si pagas la hipoteca con tarjeta
+  y la tarjeta no se cubre completa, ese pago pasa a la tasa de la tarjeta. Se activa solo si lo pides.
 - **Nada se borra.** La memoria es solo de agregado: los cambios cierran o anulan, con autor, fecha y motivo.
 - **Sin dependencias.** `fin.py` usa solo la biblioteca estándar de Python.
 
@@ -242,6 +252,10 @@ echo "export MXBANK_KEY='$(python3 -c 'import secrets; print(secrets.token_urlsa
 | Pagos | «¿Qué tarjetas tengo que pagar y cuándo?» · «¿Cuánto pagué de intereses este año?» |
 | Revisar | «¿Qué suscripciones tengo?» · «¿Qué compras a meses me faltan?» |
 | Cerrar el mes | «Hagamos el cierre de septiembre» |
+| Activar compromisos | «Quiero ver mis deudas y armar un plan para pagarlas» |
+| Pronóstico | «¿Cómo cierro el mes?» · «¿Cómo voy esta semana?» · «¿Cuánto tengo comprometido este año?» |
+| Plan de liquidación | «¿Cuánto puedo abonar?» · «Compárame avalancha y bola de nieve con 3,000 extra» |
+| Ajustar | «Este mes solo pude dar el mínimo» · «Ya pagué la hipoteca» · «¿Y si el dólar baja a 17?» |
 
 ## Categorías
 
@@ -290,6 +304,24 @@ Errores: `{"ok": false, "error": {"code": …, "message": …}}` con código de 
 **3** (problema con la memoria). Montos en la memoria: enteros en centavos (`MXN_cent`). Requiere mxbank ≥ 0.2.0 y Long-Term Memory for AI
 ≥ 0.4.0; `fin.py` verifica la versión de la memoria.
 
+## Referencia de compromisos.py (módulo opcional)
+
+| Comando | Hace |
+|---|---|
+| `activate` | Activa el módulo y declara sus predicados |
+| `credit --name … --rate 12 --payment 12000 --day 5 --balance … [--paid-with account:…]` | Registra o cambia (`--update`) un crédito; sin tasa, con `--remaining` |
+| `balance --credit … --amount … --date …` | Saldo real que da el acreedor |
+| `link --classifier merchant:… --credit …` | Regla: esos cargos son pagos del crédito |
+| `pay --credit … --amount … --date …` | Pago dicho por la persona |
+| `sync` | Liga cargos, crea los pagos pendientes y cierra los verificables |
+| `income` · `fx` · `cushion` | Ingreso esperado o promedio, tipo de cambio de referencia, meta del colchón |
+| `forecast --horizon week\|month\|quarter\|semester\|year [--fx USD=17]` | Presupuesto, real y pronóstico; margen, colchón, lo que se libera |
+| `plan [--strategy avalanche\|snowball] --extra 3000 [--save]` | Compara estrategias contra el mínimo; guarda la versión aprobada |
+| `review --month 2026-10` | Plan contra real y el plan recalculado |
+| `cascades` | Compromisos pagados con tarjeta y su riesgo |
+
+Todos llevan `--by person:<id>`. Mismos códigos de error que `fin.py`.
+
 ## Limitaciones
 
 - **Bancos:** los que soporta mxbank (BBVA débito y crédito, BanCoppel débito). Otros bancos se agregan en mxbank.
@@ -299,6 +331,8 @@ Errores: `{"ok": false, "error": {"code": …, "message": …}}` con código de 
 - **Comercios no reconocidos por mxbank** se nombran con las dos primeras palabras útiles de la descripción;
   dos variantes del mismo comercio pueden quedar como dos entradas con la misma categoría.
 - **Una computadora.** Sin sincronización entre equipos ni personas.
+- **Compromisos:** solo créditos a tasa fija en pesos (no VSM ni tasa variable); los saldos y fechas son
+  estimaciones hasta que registras el saldo del acreedor; no hay avisos fuera de la conversación.
 
 Detalle y decisiones de diseño en [docs/02-diseno.md](docs/02-diseno.md).
 
@@ -318,7 +352,9 @@ quien desarrolle con IA: [AGENTS.md](AGENTS.md).
 ```
 skill/finanzas-personales/
   SKILL.md            protocolo que sigue el agente
+  compromisos.md      protocolo del módulo opcional compromisos
   scripts/fin.py      importador, reglas, capturas y reportes
+  scripts/compromisos.py  créditos, pronóstico, plan de liquidación y cascadas
   scripts/seed.json   predicados, categorías, reglas por tipo y recetas
 tools/                instalador del skill y guardia de datos privados
 tests/                pruebas y fixtures sintéticos
@@ -332,13 +368,15 @@ site/                 sitio del proyecto (GitHub Pages)
 |---|---|
 | [01 · Análisis](docs/01-analisis.md) | Qué hace una app de finanzas personales y cómo se cubre sin app |
 | [02 · Diseño](docs/02-diseno.md) | Decisiones, modelo en la memoria, limitaciones conocidas |
+| [03 · Compromisos](docs/03-compromisos.md) | El módulo opcional: de dónde viene, decisiones y modelo |
 | [SKILL.md](skill/finanzas-personales/SKILL.md) | El protocolo del agente |
 | [CHANGELOG](CHANGELOG.md) | Historial de versiones |
 | [Aviso legal](AVISO-LEGAL.md) · [Seguridad](SECURITY.md) | Límites de responsabilidad y reporte privado de problemas |
 
 ## Hoja de ruta
 
-- Metas de ahorro, deudas (avalancha / bola de nieve) y patrimonio neto.
+- Metas de ahorro y patrimonio neto (las deudas ya están en el módulo compromisos).
+- Compromisos: créditos en VSM o con tasa variable, simular una compra a meses antes de hacerla, avisos programados.
 - Detección de cargos recurrentes y aumentos de precio entre meses.
 - Tablero HTML local regenerable desde la memoria.
 - Gastos compartidos y deducibles personales con CFDI.

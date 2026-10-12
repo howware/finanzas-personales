@@ -3,7 +3,7 @@
     python tools/install_skill.py                                   # ~/.claude/skills/finanzas-personales
     python tools/install_skill.py --target ~/.codex/skills/finanzas-personales
 
-Copia SKILL.md y scripts/. Reinstalar reemplaza el skill y nunca toca tus datos (la memoria vive en la
+Copia SKILL.md, compromisos.md y scripts/. Reinstalar reemplaza el skill y nunca toca tus datos (la memoria vive en la
 carpeta de tus finanzas, no aquí).
 """
 
@@ -29,7 +29,7 @@ def main() -> int:
         shutil.rmtree(target)
     shutil.copytree(SOURCE, target, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     print(f"Skill instalado en {target}")
-    print("Requiere también los skills mxbank (>= 0.2.0) y project-memory (>= 0.3.0).")
+    print("Requiere también los skills mxbank (>= 0.2.0) y project-memory (>= 0.4.0).")
     return 0
 
 
