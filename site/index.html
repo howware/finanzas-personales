@@ -203,6 +203,7 @@
       <a href="#privacidad">Privacidad</a>
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#que-hace">Qué hace</a>
+      <a href="#compromisos">Compromisos</a>
       <a href="#instalacion">Instalación</a>
       <a class="gh" href="https://github.com/howware/finanzas-personales">GitHub</a>
     </nav>
@@ -279,6 +280,7 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
             <li>Números de tarjeta, de cuenta y CLABE</li>
             <li>Nombres y cuentas de las personas a las que transfieres</li>
             <li>Claves de rastreo, referencias y conceptos</li>
+            <li>Los estados de tus créditos e hipotecas, y los números de crédito o de contrato</li>
             <li>El archivo de la memoria (el agente solo ve las respuestas a sus consultas)</li>
           </ul>
         </div>
@@ -289,6 +291,7 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
             <li>Categorías, presupuestos y totales</li>
             <li>Seudónimos en lugar de cuentas y personas: <code>ACC_92d5</code>, <code>PERSONA_7f3a</code></li>
             <li>El nombre del producto y los últimos 4 dígitos de la cuenta (se pueden omitir)</li>
+            <li>Con el módulo compromisos: el nombre que le pones a cada crédito, acreedor, tasa, pago, saldo, ingreso esperado y colchón</li>
             <li>Lo que tú escribes en la conversación</li>
           </ul>
         </div>
@@ -312,6 +315,7 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
             <li><b>La regla de no abrir el PDF es una instrucción al agente.</b> En Claude Code se refuerza con un permiso que le niega leer PDFs, pero no es una barrera absoluta.</li>
             <li><b>Lo que el agente sí ve sale de tu computadora.</b> Comercios, montos, fechas, seudónimos y tus mensajes llegan a tu proveedor de IA, bajo sus términos.</li>
             <li><b>La memoria no está cifrada.</b> Protégela como cualquier archivo personal.</li>
+            <li><b>Los pronósticos son estimaciones.</b> Saldos y fechas de término del módulo compromisos pueden diferir de los del acreedor; los oficiales son los suyos. No es asesoría financiera.</li>
           </ul>
         </div>
         <div class="panel keep">
@@ -335,7 +339,7 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
       <div class="grid4">
         <div class="map"><div class="from">Captura</div><div class="arrow">↓</div><h3>mxbank</h3><p>Lee el PDF del banco en tu máquina y entrega movimientos sin nombre, RFC, tarjeta ni CLABE.</p></div>
         <div class="map"><div class="from">Base de datos</div><div class="arrow">↓</div><h3>Memoria persistente</h3><p>Un archivo SQLite local que solo agrega: cada cambio queda con fecha, evidencia y autor.</p></div>
-        <div class="map"><div class="from">Reglas</div><div class="arrow">↓</div><h3>Skill finanzas-personales</h3><p>Categorías, presupuestos, qué no es gasto, pagos de tarjeta y cierre de mes.</p></div>
+        <div class="map"><div class="from">Reglas</div><div class="arrow">↓</div><h3>Skill finanzas-personales</h3><p>Categorías, presupuestos, qué no es gasto, pagos de tarjeta, cierre de mes y, si lo activas, tus compromisos.</p></div>
         <div class="map"><div class="from"><s>Pantallas</s></div><div class="arrow">↓</div><h3>La conversación</h3><p>Preguntas en tus palabras; el agente consulta, calcula y te responde.</p></div>
       </div>
     </div>
@@ -370,7 +374,35 @@ Te quedan <span class="n">$819.60</span> para 9 días.</pre>
     </div>
   </section>
 
-  <section id="categorias" class="alt">
+  <section id="compromisos" class="alt">
+    <div class="wrap two">
+      <div>
+        <h2>Módulo opcional: ver hacia adelante</h2>
+        <p class="sub" style="margin-bottom:24px">Como el <i>revenue management</i> de un hotel: presupuesto, real y pronóstico, con la diferencia a tiempo para corregir. Por semana, mes, trimestre, semestre y año. Se activa solo si lo pides.</p>
+        <ul style="color:var(--text-2);font-size:15px;margin:0 0 16px;padding-left:20px">
+          <li><b>Tus créditos e hipotecas</b>, con tasa o solo con su calendario de pagos, y lo que ya tienes comprometido en compras a meses.</li>
+          <li><b>Ingreso esperado</b>, también en dólares, y qué pasa si cambia el tipo de cambio.</li>
+          <li><b>El colchón va primero</b>; el abono extra sale solo de lo que sobra, y puede ser $0.</li>
+          <li><b>Un plan de liquidación</b> (avalancha o bola de nieve) que se reajusta, no se rompe: un mes de mínimo por una emergencia es parte del plan.</li>
+          <li><b>Cascadas</b>: si pagas la hipoteca con tarjeta y la tarjeta no se cubre completa, ese pago pasa a la tasa de la tarjeta. Te lo avisa.</li>
+        </ul>
+      </div>
+      <div class="term" role="img" aria-label="Ejemplo de revisión del plan de liquidación después de un mes de pago mínimo">
+        <div class="term-bar"><i></i><i></i><i></i><b>el plan se reajusta</b></div>
+<pre><span class="u">› Este mes solo pude dar el mínimo,
+  tuve un gasto médico</span>
+
+Entendido, es parte del plan. Con lo
+que pagaste, terminas la hipoteca un
+mes después de lo planeado (estimado).
+Si en noviembre abonas <span class="n">$3,000.00</span>,
+recuperas el ritmo; si no, el plan
+sigue igual desde el saldo real.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="categorias">
     <div class="wrap two">
       <div>
         <h2>Categorías: base fija, detalle tuyo</h2>
@@ -395,19 +427,19 @@ Amazon siguen en Compras personales.
     </div>
   </section>
 
-  <section id="herramientas">
+  <section id="herramientas" class="alt">
     <div class="wrap">
       <h2>Tres herramientas abiertas y auditables</h2>
       <p class="sub">Cada una sirve sola; juntas reemplazan una app de finanzas. Todas son código abierto bajo Apache 2.0.</p>
       <div class="tools">
         <div class="tool"><span class="tag">Captura</span><h3>mxbank</h3><p>Estados de cuenta de bancos mexicanos en PDF a JSON anonimizado y conciliado, con ids estables entre meses.</p><a href="https://github.com/howware/mx-bank-statement-reader">howware/mx-bank-statement-reader →</a></div>
         <div class="tool"><span class="tag">Almacén</span><h3>Long-Term Memory for AI</h3><p>Memoria persistente para agentes: hechos con vigencia, eventos, consultas sin SQL y respaldo verificado.</p><a href="https://github.com/howware/long-term-memory-for-AI">howware/long-term-memory-for-AI →</a></div>
-        <div class="tool"><span class="tag">Reglas</span><h3>finanzas-personales</h3><p>El skill que une las dos: importador, categorías, presupuestos, pagos de tarjeta y reportes.</p><a href="https://github.com/howware/finanzas-personales">howware/finanzas-personales →</a></div>
+        <div class="tool"><span class="tag">Reglas</span><h3>finanzas-personales</h3><p>El skill que une las dos: importador, categorías, presupuestos, pagos de tarjeta, reportes y el módulo opcional compromisos.</p><a href="https://github.com/howware/finanzas-personales">howware/finanzas-personales →</a></div>
       </div>
     </div>
   </section>
 
-  <section id="instalacion" class="alt install">
+  <section id="instalacion" class="install">
     <div class="wrap two">
       <div>
         <h2>Instalación</h2>
